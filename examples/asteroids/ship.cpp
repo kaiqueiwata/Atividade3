@@ -159,10 +159,9 @@ void Ship::terminateGL() {
 void Ship::update(const GameData &gameData, float deltaTime) {
   // Rotate
   if (gameData.m_input[static_cast<size_t>(Input::Left)])
-    m_rotation = glm::wrapAngle(m_rotation + 4.0f * deltaTime);
+    m_translation.x -= deltaTime;
   if (gameData.m_input[static_cast<size_t>(Input::Right)])
-    m_rotation = glm::wrapAngle(m_rotation - 4.0f * deltaTime);
-
+    m_translation.x += deltaTime;
   // Apply thrust
   if (gameData.m_input[static_cast<size_t>(Input::Up)] &&
       gameData.m_state == State::Playing) {
