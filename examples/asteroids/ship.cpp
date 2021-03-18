@@ -14,6 +14,7 @@ void Ship::initializeGL(GLuint program) {
 
   m_rotation = 0.0f;
   m_translation = glm::vec2(0);
+  m_translation.y = -0.8;
   m_velocity = glm::vec2(0);
 
   // clang-format off
