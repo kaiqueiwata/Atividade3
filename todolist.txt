@@ -1,0 +1,3 @@
+1 - descentralizar a nave: fazer com que a "camêra" não fique seguindo a nave ou que a nave não fique sempre no centro da tela
+2 - substituir os asteroids pelas naves inimigas
+3 - criar colisão das naves com a nave principal
