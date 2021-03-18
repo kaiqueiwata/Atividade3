@@ -20,15 +20,19 @@ void Asteroids::initializeGL(GLuint program, int quantity) {
   m_asteroids.clear();
   m_asteroids.resize(quantity);
 
-  for (auto &asteroid : m_asteroids) {
-    asteroid = createAsteroid();
+  
+   for (auto &asteroid : m_asteroids) {
+     asteroid = createAsteroid();
+      float i;
+     // Make sure the asteroid won't collide with the ship
+     do {
+       i += 0.5; 
+       asteroid.m_translation = {-1+i, 1};
+      } while (glm::length(asteroid.m_translation) < 0.5f);
+   }
+   
+  
 
-    // Make sure the asteroid won't collide with the ship
-    do {
-      asteroid.m_translation = {m_randomDist(m_randomEngine),
-                                m_randomDist(m_randomEngine)};
-    } while (glm::length(asteroid.m_translation) < 0.5f);
-  }
 }
 
 void Asteroids::paintGL() {
@@ -63,12 +67,12 @@ void Asteroids::terminateGL() {
   }
 }
 
-void Asteroids::update(const Ship &ship, float deltaTime) {
+void Asteroids::update(float deltaTime) {
   for (auto &asteroid : m_asteroids) {
-    asteroid.m_translation -= ship.m_velocity * deltaTime;
+    asteroid.m_translation.y -= 0.5 * deltaTime;
     asteroid.m_rotation = glm::wrapAngle(
         asteroid.m_rotation + asteroid.m_angularVelocity * deltaTime);
-    asteroid.m_translation += asteroid.m_velocity * deltaTime;
+  
 
     // Wrap-around
     if (asteroid.m_translation.x < -1.0f) asteroid.m_translation.x += 2.0f;
@@ -108,9 +112,8 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation,
   std::vector<glm::vec2> positions(0);
   positions.emplace_back(0, 0);
   auto step{M_PI * 2 / asteroid.m_polygonSides};
-  std::uniform_real_distribution<float> randomRadius(0.8f, 1.0f);
   for (auto angle : iter::range(0.0, M_PI * 2, step)) {
-    auto radius{randomRadius(re)};
+    auto radius{0.5};
     positions.emplace_back(radius * std::cos(angle), radius * std::sin(angle));
   }
   positions.push_back(positions.at(1));
