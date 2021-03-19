@@ -30,7 +30,7 @@ void Asteroids::initializeGL(GLuint program) {
     int index = 1;
     for (auto &asteroid : m_asteroids) {
     asteroid = createAsteroid();
-    
+
     if(1 <= index && index < 6){
       asteroid.m_translation = {x, 0.9};
       x += 0.4; 
@@ -91,8 +91,16 @@ void Asteroids::terminateGL() {
 
 void Asteroids::update(float deltaTime) {
 
+  tempo_atual_restante -= deltaTime;
+
+  if(tempo_atual_restante <= 0)
+  {
+    sentido *= (-1);
+  }
+
   for (auto &asteroid : m_asteroids) {
     asteroid.m_translation.y -= 0.4 * deltaTime;
+    asteroid.m_translation.x -= sentido * deltaTime;
     asteroid.m_rotation = glm::wrapAngle(
         asteroid.m_rotation + asteroid.m_angularVelocity * deltaTime);
   
