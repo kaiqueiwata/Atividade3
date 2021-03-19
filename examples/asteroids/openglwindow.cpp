@@ -56,7 +56,7 @@ void OpenGLWindow::initializeGL() {
   if (m_font_pts == nullptr) {
     throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
   }
-
+ 
   //letra do game over é maior
   m_font_game_over = io.Fonts->AddFontFromFileTTF(filenameAquire.c_str(), 45.0f);
   if (m_font_pts == nullptr) {
@@ -104,7 +104,7 @@ void OpenGLWindow::update() {
 
   m_ship.update(m_gameData, deltaTime);
   m_starLayers.update(m_ship, deltaTime);
-  m_asteroids.update(deltaTime);
+  m_asteroids.update(m_gameData, deltaTime);
   m_bullets.update(m_ship, m_gameData, deltaTime);
 
   if (m_gameData.m_state == State::Playing) {
@@ -228,6 +228,7 @@ void OpenGLWindow::checkCollisions() {
 
 void OpenGLWindow::checkWinCondition() {
   if (m_asteroids.m_asteroids.empty()) {
+    m_gameData.fator_vel_jogo += 0.1f;
     m_asteroids.initializeGL(m_objectsProgram);
     m_restartWaitTimer.restart();
   }

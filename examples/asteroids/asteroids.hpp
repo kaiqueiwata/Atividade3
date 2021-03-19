@@ -16,7 +16,7 @@ class Asteroids {
   void paintGL();
   void terminateGL();
 
-  void update(float deltaTime);
+  void update(GameData m_gameData, float deltaTime);
 
  private:
   friend OpenGLWindow;

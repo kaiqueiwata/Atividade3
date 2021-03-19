@@ -90,7 +90,7 @@ void Asteroids::terminateGL() {
   }
 }
 
-void Asteroids::update(float deltaTime) {
+void Asteroids::update(GameData m_gameData, float deltaTime) {
 
   tempo_atual_restante -= deltaTime;
 
@@ -101,7 +101,7 @@ void Asteroids::update(float deltaTime) {
   }
 
   for (auto &asteroid : m_asteroids) {
-    asteroid.m_translation.y -= 0.2 * deltaTime;
+    asteroid.m_translation.y -= m_gameData.fator_vel_jogo * deltaTime;
     asteroid.m_translation.x -= sentido * deltaTime;
     asteroid.m_rotation = glm::wrapAngle(
         asteroid.m_rotation + asteroid.m_angularVelocity * deltaTime);
