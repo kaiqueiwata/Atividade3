@@ -29,7 +29,7 @@ class Asteroids {
 
   int CONST_QUANTIDADE_NAVES = 14;
 
-  float CONST_TEMPO_ZIG_ZAG = 5;
+  float CONST_TEMPO_ZIG_ZAG = 1;
   float tempo_atual_restante = CONST_TEMPO_ZIG_ZAG;
   int sentido = +1;
 

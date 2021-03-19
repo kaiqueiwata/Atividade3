@@ -96,6 +96,7 @@ void Asteroids::update(float deltaTime) {
   if(tempo_atual_restante <= 0)
   {
     sentido *= (-1);
+    tempo_atual_restante = CONST_TEMPO_ZIG_ZAG;
   }
 
   for (auto &asteroid : m_asteroids) {
