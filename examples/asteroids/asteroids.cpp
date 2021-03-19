@@ -3,9 +3,9 @@
 #include <cppitertools/itertools.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 
+
 void Asteroids::initializeGL(GLuint program) {
   terminateGL();
-
   // Start pseudo-random number generator
   auto seed{std::chrono::steady_clock::now().time_since_epoch().count()};
   m_randomEngine.seed(seed);
@@ -15,7 +15,8 @@ void Asteroids::initializeGL(GLuint program) {
   m_rotationLoc = glGetUniformLocation(m_program, "rotation");
   m_scaleLoc = glGetUniformLocation(m_program, "scale");
   m_translationLoc = glGetUniformLocation(m_program, "translation");
-
+  // Aumenta difculdade a cada restart game
+  
   // Create asteroids
   m_asteroids.clear();
   m_asteroids.resize(CONST_QUANTIDADE_NAVES);
@@ -100,7 +101,7 @@ void Asteroids::update(float deltaTime) {
   }
 
   for (auto &asteroid : m_asteroids) {
-    asteroid.m_translation.y -= 0.4 * deltaTime;
+    asteroid.m_translation.y -= 0.2 * deltaTime;
     asteroid.m_translation.x -= sentido * deltaTime;
     asteroid.m_rotation = glm::wrapAngle(
         asteroid.m_rotation + asteroid.m_angularVelocity * deltaTime);
