@@ -103,7 +103,7 @@ void OpenGLWindow::update() {
   }
 
   m_ship.update(m_gameData, deltaTime);
-  m_starLayers.update(m_ship, deltaTime);
+  m_starLayers.update(deltaTime);
   m_asteroids.update(m_gameData, deltaTime);
   m_bullets.update(m_ship, m_gameData, deltaTime);
 
@@ -151,7 +151,7 @@ void OpenGLWindow::paintUI() {
     } 
     else {
 
-      auto size{ImVec2(400, 85)};
+      auto size{ImVec2(330, 85)};
       auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
                            (m_viewportHeight - size.y) / 2.0f)};
 
