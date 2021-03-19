@@ -43,7 +43,7 @@ void Asteroids::paintGL() {
 
     glUniform4fv(m_colorLoc, 1, &asteroid.m_color.r);
     glUniform1f(m_scaleLoc, asteroid.m_scale);
-    glUniform1f(m_rotationLoc, asteroid.m_rotation);
+    //glUniform1f(m_rotationLoc, asteroid.m_rotation);
 
     for (auto i : {-2, 0, 2}) {
       for (auto j : {-2, 0, 2}) {
@@ -97,7 +97,7 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation,
 
   asteroid.m_color.a = 1.0f;
   asteroid.m_rotation = 0.0f;
-  asteroid.m_scale = 0.05;
+  asteroid.m_scale = 0.02;
   asteroid.m_translation = translation;
 
   // Choose a random angular velocity
