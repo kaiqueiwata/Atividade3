@@ -20,23 +20,34 @@ void Asteroids::initializeGL(GLuint program, int quantity) {
   m_asteroids.clear();
   m_asteroids.resize(quantity);
 
-  
-   for (auto &asteroid : m_asteroids) {
-     asteroid = createAsteroid();
-      float i;
-     // Make sure the asteroid won't collide with the ship
-     
-       do {
-         i += 0.5; 
-        asteroid.m_translation = {-0.8 + i, 1};
-         } while (glm::length(asteroid.m_translation) < 0.5f);
-     }
+
+   // -1 < x < 1
+   // -0.8 -0.6 -0.4 -0.2 -0  0.2 0.4 0.6 0.8
+   //   1   1.2  1.4  1.6  1.8 2 2.2 2.4 2.6 2.8
+   //   3    3.2
+
+    double x = -0.8;
+    for (auto &asteroid : m_asteroids) {
+    asteroid = createAsteroid();
     
-
+    if(x < 1){
+      asteroid.m_translation = {x, 0.9};
+      x += 0.2; 
+    }
+    else if(x < 3){
+      asteroid.m_translation = {x - 1.9, 0.7};
+      x += 0.2; 
+    }
+     else if(x < 5){
+      asteroid.m_translation = {x - 3.8, 0.5};
+      x += 0.2; 
+    }
    
-  
-
+     
+  }
 }
+   
+
 
 void Asteroids::paintGL() {
   glUseProgram(m_program);
