@@ -136,7 +136,7 @@ void Ship::paintGL(const GameData &gameData) {
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       // 50% transparent
-      glUniform4f(m_colorLoc, 1, 1, 1, 0.5f);
+      glUniform4f(m_colorLoc, 0.2f, 1, 1, 0.5f);
 
       glDrawElements(GL_TRIANGLES, 24 * 3, GL_UNSIGNED_INT, nullptr);
 
