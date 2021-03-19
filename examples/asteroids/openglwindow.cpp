@@ -44,15 +44,22 @@ void OpenGLWindow::handleEvent(SDL_Event &event) {
     if (event.button.button == SDL_BUTTON_RIGHT)
       m_gameData.m_input.reset(static_cast<size_t>(Input::Up));
   }
-
 }
 
 void OpenGLWindow::initializeGL() {
   // Load a new font
   ImGuiIO &io{ImGui::GetIO()};
-  auto filename{getAssetsPath() + "Inconsolata-Medium.ttf"};
-  m_font = io.Fonts->AddFontFromFileTTF(filename.c_str(), 60.0f);
-  if (m_font == nullptr) {
+
+  //letra da pontuação é menor
+  auto filenameAquire{getAssetsPath() + "AquireBold-8Ma60.otf"};
+  m_font_pts = io.Fonts->AddFontFromFileTTF(filenameAquire.c_str(), 30.0f);
+  if (m_font_pts == nullptr) {
+    throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
+  }
+
+  //letra do game over é maior
+  m_font_game_over = io.Fonts->AddFontFromFileTTF(filenameAquire.c_str(), 45.0f);
+  if (m_font_pts == nullptr) {
     throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
   }
 
@@ -122,23 +129,45 @@ void OpenGLWindow::paintUI() {
   abcg::OpenGLWindow::paintUI();
 
   {
-    auto size{ImVec2(300, 85)};
-    auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
-                         (m_viewportHeight - size.y) / 2.0f)};
-    ImGui::SetNextWindowPos(position);
-    ImGui::SetNextWindowSize(size);
+
     ImGuiWindowFlags flags{ImGuiWindowFlags_NoBackground |
-                           ImGuiWindowFlags_NoTitleBar |
-                           ImGuiWindowFlags_NoInputs};
-    ImGui::Begin(" ", nullptr, flags);
-    ImGui::PushFont(m_font);
+                            ImGuiWindowFlags_NoTitleBar |
+                            ImGuiWindowFlags_NoInputs};
+    if (m_gameData.m_state != State::GameOver) {
 
-    if (m_gameData.m_state == State::GameOver) {
-      ImGui::Text("Game Over!");
+      auto tamanhoDisplayPontuacao{ImVec2(150, 50)};
+      auto posicaoDisplayPontuacao{
+          ImVec2(m_viewportWidth - tamanhoDisplayPontuacao.x - 5,
+                 m_viewportHeight - tamanhoDisplayPontuacao.y - 5)};
+
+      ImGui::SetNextWindowPos(posicaoDisplayPontuacao);
+      ImGui::SetNextWindowSize(tamanhoDisplayPontuacao);
+      ImGui::Begin(" ", nullptr, flags);
+
+      ImGui::PushFont(m_font_pts);
+      ImGui::Text("%d pts", m_gameData.PONTOS);
+      ImGui::PopFont();
+      ImGui::End();
+    } 
+    else {
+
+      auto size{ImVec2(400, 85)};
+      auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
+                           (m_viewportHeight - size.y) / 2.0f)};
+
+      ImGui::SetNextWindowPos(position);
+      ImGui::SetNextWindowSize(size);
+
+      ImGui::Begin(" ", nullptr, flags);
+      ImGui::PushFont(m_font_game_over);
+
+      if (m_gameData.m_state == State::GameOver) {
+        ImGui::Text("Fim de Jogo!");
+      }
+
+      ImGui::PopFont();
+      ImGui::End();
     }
-
-    ImGui::PopFont();
-    ImGui::End();
   }
 }
 
@@ -191,7 +220,6 @@ void OpenGLWindow::checkCollisions() {
         }
       }
     }
-
 
     m_asteroids.m_asteroids.remove_if(
         [](const Asteroids::Asteroid &a) { return a.m_hit; });
