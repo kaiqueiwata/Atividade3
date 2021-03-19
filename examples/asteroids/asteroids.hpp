@@ -12,7 +12,7 @@ class OpenGLWindow;
 
 class Asteroids {
  public:
-  void initializeGL(GLuint program, int quantity);
+  void initializeGL(GLuint program);
   void paintGL();
   void terminateGL();
 
@@ -26,7 +26,9 @@ class Asteroids {
   GLint m_rotationLoc{};
   GLint m_translationLoc{};
   GLint m_scaleLoc{};
- 
+
+  int CONST_QUANTIDADE_NAVES = 28;
+
   struct Asteroid {
     GLuint m_vao{};
     GLuint m_vbo{};

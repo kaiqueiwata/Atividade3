@@ -3,7 +3,7 @@
 #include <cppitertools/itertools.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 
-void Asteroids::initializeGL(GLuint program, int quantity) {
+void Asteroids::initializeGL(GLuint program) {
   terminateGL();
 
   // Start pseudo-random number generator
@@ -18,7 +18,7 @@ void Asteroids::initializeGL(GLuint program, int quantity) {
 
   // Create asteroids
   m_asteroids.clear();
-  m_asteroids.resize(quantity);
+  m_asteroids.resize(CONST_QUANTIDADE_NAVES);
 
 
    // -1 < x < 1

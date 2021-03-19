@@ -81,7 +81,7 @@ void OpenGLWindow::restart() {
 
   m_starLayers.initializeGL(m_starsProgram, 25);
   m_ship.initializeGL(m_objectsProgram);
-  m_asteroids.initializeGL(m_objectsProgram, 28);
+  m_asteroids.initializeGL(m_objectsProgram);
   m_bullets.initializeGL(m_objectsProgram);
 }
 
@@ -135,8 +135,6 @@ void OpenGLWindow::paintUI() {
 
     if (m_gameData.m_state == State::GameOver) {
       ImGui::Text("Game Over!");
-    } else if (m_gameData.m_state == State::Win) {
-      ImGui::Text("*You Win!*");
     }
 
     ImGui::PopFont();
@@ -200,7 +198,7 @@ void OpenGLWindow::checkCollisions() {
 
 void OpenGLWindow::checkWinCondition() {
   if (m_asteroids.m_asteroids.empty()) {
-    m_gameData.m_state = State::Win;
+    m_asteroids.initializeGL(m_objectsProgram);
     m_restartWaitTimer.restart();
   }
 }
