@@ -42,8 +42,6 @@ void Asteroids::initializeGL(GLuint program, int quantity) {
       asteroid.m_translation = {x - 3.8, 0.5};
       x += 0.2; 
     }
-   
-     
   }
 }
    
@@ -87,7 +85,6 @@ void Asteroids::update(float deltaTime) {
     asteroid.m_rotation = glm::wrapAngle(
         asteroid.m_rotation + asteroid.m_angularVelocity * deltaTime);
   
-
     // Wrap-around
     if (asteroid.m_translation.x < -1.0f) asteroid.m_translation.x += 2.0f;
     if (asteroid.m_translation.x > +1.0f) asteroid.m_translation.x -= 2.0f;
@@ -96,8 +93,7 @@ void Asteroids::update(float deltaTime) {
   }
 }
 
-Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation,
-                                              float scale) {
+Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation) {
   Asteroid asteroid;
 
   auto &re{m_randomEngine};  // Shortcut
@@ -107,7 +103,7 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation,
 
   // Choose a random color (actually, a grayscale)
   std::uniform_real_distribution<float> randomIntensity(0.5f, 1.0f);
-  asteroid.m_color = glm::vec4(1) * randomIntensity(re);
+  asteroid.m_color = glm::vec4 {1.0f,0.5f,0.5f, 1.0f};
 
   asteroid.m_color.a = 1.0f;
   asteroid.m_rotation = 0.0f;
