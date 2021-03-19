@@ -23,7 +23,7 @@ void Asteroids::initializeGL(GLuint program) {
 
    // -1 < x < 1
    // -0.8     -0.4    -0     0.4    0.8
-   //     -0.6     -0.2   0.2    0.6
+   //     -0.6     -0.2   0.2    0.6     
    // -0.8     -0.4    -0     0.4    0.8
 
     double x = -0.8;
