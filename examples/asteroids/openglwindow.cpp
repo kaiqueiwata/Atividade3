@@ -190,7 +190,7 @@ void OpenGLWindow::terminateGL() {
 
 void OpenGLWindow::checkCollisions() {
   // Check collision between ship and asteroids
-  for (auto &asteroid : m_asteroids.m_asteroids) {
+  for (auto &asteroid : m_asteroids.m_enemies) {
     auto asteroidTranslation{asteroid.m_translation};
     auto distance{glm::distance(m_ship.m_translation, asteroidTranslation)};
 
@@ -205,7 +205,7 @@ void OpenGLWindow::checkCollisions() {
   for (auto &bullet : m_bullets.m_bullets) {
     if (bullet.m_dead) continue;
 
-    for (auto &asteroid : m_asteroids.m_asteroids) {
+    for (auto &asteroid : m_asteroids.m_enemies) {
       for (auto i : {-2, 0, 2}) {
         for (auto j : {-2, 0, 2}) {
           auto asteroidTranslation{asteroid.m_translation + glm::vec2(i, j)};
@@ -221,14 +221,14 @@ void OpenGLWindow::checkCollisions() {
       }
     }
 
-    m_asteroids.m_asteroids.remove_if(
-        [](const Asteroids::Asteroid &a) { return a.m_hit; });
+    m_asteroids.m_enemies.remove_if(
+        [](const Enemies::Enemy &a) { return a.m_hit; });
   }
 }
 
 void OpenGLWindow::checkWinCondition() {
-  if (m_asteroids.m_asteroids.empty()) {
-    m_gameData.fator_vel_jogo += 0.1f;
+  if (m_asteroids.m_enemies.empty()) {
+    m_gameData.fator_vel_jogo += 01.f;
     m_asteroids.initializeGL(m_objectsProgram);
     m_restartWaitTimer.restart();
   }

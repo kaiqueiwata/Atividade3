@@ -1,10 +1,10 @@
-#include "asteroids.hpp"
+#include "enemies.hpp"
 
 #include <cppitertools/itertools.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 
 
-void Asteroids::initializeGL(GLuint program) {
+void Enemies::initializeGL(GLuint program) {
   terminateGL();
   // Start pseudo-random number generator
   auto seed{std::chrono::steady_clock::now().time_since_epoch().count()};
@@ -18,8 +18,8 @@ void Asteroids::initializeGL(GLuint program) {
   // Aumenta difculdade a cada restart game
   
   // Create asteroids
-  m_asteroids.clear();
-  m_asteroids.resize(CONST_QUANTIDADE_NAVES);
+  m_enemies.clear();
+  m_enemies.resize(CONST_QUANTIDADE_NAVES);
 
 
    // -1 < x < 1
@@ -29,11 +29,11 @@ void Asteroids::initializeGL(GLuint program) {
 
     double x = -0.8;
     int index = 1;
-    for (auto &asteroid : m_asteroids) {
-    asteroid = createAsteroid();
+    for (auto &enemy : m_enemies) {
+    enemy = createAsteroid();
 
     if(1 <= index && index < 6){
-      asteroid.m_translation = {x, 0.9};
+      enemy.m_translation = {x, 0.9};
       x += 0.4; 
     }
     else if(6 <= index && index < 10 ){
@@ -41,7 +41,7 @@ void Asteroids::initializeGL(GLuint program) {
       if(index == 6)
         x = -0.6;
 
-      asteroid.m_translation = {x, 0.7};
+      enemy.m_translation = {x, 0.7};
       x += 0.4; 
     }
     else if(10 <= index && index <= CONST_QUANTIDADE_NAVES){
@@ -49,7 +49,7 @@ void Asteroids::initializeGL(GLuint program) {
       if(index == 10)
         x = -0.8;
 
-      asteroid.m_translation = {x, 0.5};
+      enemy.m_translation = {x, 0.5};
       x += 0.4; 
     }
     index++;
@@ -58,10 +58,10 @@ void Asteroids::initializeGL(GLuint program) {
    
 
 
-void Asteroids::paintGL() {
+void Enemies::paintGL() {
   glUseProgram(m_program);
 
-  for (auto &asteroid : m_asteroids) {
+  for (auto &asteroid : m_enemies) {
     glBindVertexArray(asteroid.m_vao);
 
     glUniform4fv(m_colorLoc, 1, &asteroid.m_color.r);
@@ -83,14 +83,14 @@ void Asteroids::paintGL() {
   glUseProgram(0);
 }
 
-void Asteroids::terminateGL() {
-  for (auto asteroid : m_asteroids) {
+void Enemies::terminateGL() {
+  for (auto asteroid : m_enemies) {
     glDeleteBuffers(1, &asteroid.m_vbo);
     glDeleteVertexArrays(1, &asteroid.m_vao);
   }
 }
 
-void Asteroids::update(GameData m_gameData, float deltaTime) {
+void Enemies::update(GameData m_gameData, float deltaTime) {
 
   tempo_atual_restante -= deltaTime;
 
@@ -100,7 +100,7 @@ void Asteroids::update(GameData m_gameData, float deltaTime) {
     tempo_atual_restante = CONST_TEMPO_ZIG_ZAG;
   }
 
-  for (auto &asteroid : m_asteroids) {
+  for (auto &asteroid : m_enemies) {
     asteroid.m_translation.y -= m_gameData.fator_vel_jogo * deltaTime;
     asteroid.m_translation.x -= sentido * deltaTime;
     asteroid.m_rotation = glm::wrapAngle(
@@ -114,8 +114,8 @@ void Asteroids::update(GameData m_gameData, float deltaTime) {
   }
 }
 
-Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation) {
-  Asteroid asteroid;
+Enemies::Enemy Enemies::createAsteroid(glm::vec2 translation) {
+  Enemy asteroid;
 
   auto &re{m_randomEngine};  // Shortcut
 

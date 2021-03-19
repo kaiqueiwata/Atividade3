@@ -10,7 +10,7 @@
 
 class OpenGLWindow;
 
-class Asteroids {
+class Enemies {
  public:
   void initializeGL(GLuint program);
   void paintGL();
@@ -34,7 +34,7 @@ class Asteroids {
   int sentido = +1;
 
 
-  struct Asteroid {
+  struct Enemy {
     GLuint m_vao{};
     GLuint m_vbo{};
 
@@ -48,12 +48,12 @@ class Asteroids {
     glm::vec2 m_velocity{glm::vec2(0)};
   };
 
-  std::list<Asteroid> m_asteroids;
+  std::list<Enemy> m_enemies;
 
   std::default_random_engine m_randomEngine;
   std::uniform_real_distribution<float> m_randomDist{-1.0f, 1.0f};
 
-  Asteroids::Asteroid createAsteroid(glm::vec2 translation = glm::vec2(0));
+  Enemies::Enemy createAsteroid(glm::vec2 translation = glm::vec2(0));
 };
 
 #endif

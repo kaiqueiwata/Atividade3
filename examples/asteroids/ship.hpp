@@ -4,7 +4,7 @@
 #include "abcg.hpp"
 #include "gamedata.hpp"
 
-class Asteroids;
+class Enemies;
 class Bullets;
 class OpenGLWindow;
 class StarLayers;
@@ -19,7 +19,7 @@ class Ship {
   void setRotation(float rotation) { m_rotation = rotation; }
 
  private:
-  friend Asteroids;
+  friend Enemies;
   friend Bullets;
   friend OpenGLWindow;
   friend StarLayers;
