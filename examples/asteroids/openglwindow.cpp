@@ -167,6 +167,7 @@ void OpenGLWindow::checkCollisions() {
 
     if (distance < m_ship.m_scale * 0.9f + asteroid.m_scale * 3.0f) {
       m_gameData.m_state = State::GameOver;
+      m_gameData.PONTOS = 0;
       m_restartWaitTimer.restart();
     }
   }
@@ -185,6 +186,7 @@ void OpenGLWindow::checkCollisions() {
           if (distance < m_bullets.m_scale + asteroid.m_scale * 3.0f) {
             asteroid.m_hit = true;
             bullet.m_dead = true;
+            m_gameData.PONTOS++;
           }
         }
       }
