@@ -22,26 +22,36 @@ void Asteroids::initializeGL(GLuint program) {
 
 
    // -1 < x < 1
-   // -0.8 -0.6 -0.4 -0.2 -0  0.2 0.4 0.6 0.8
-   //   1   1.2  1.4  1.6  1.8 2 2.2 2.4 2.6 2.8
-   //   3    3.2
+   // -0.8     -0.4    -0     0.4    0.8
+   //     -0.6     -0.2   0.2    0.6
+   // -0.8     -0.4    -0     0.4    0.8
 
     double x = -0.8;
+    int index = 1;
     for (auto &asteroid : m_asteroids) {
     asteroid = createAsteroid();
     
-    if(x < 1){
+    if(1 <= index && index < 6){
       asteroid.m_translation = {x, 0.9};
-      x += 0.2; 
+      x += 0.4; 
     }
-    else if(x < 3){
-      asteroid.m_translation = {x - 1.9, 0.7};
-      x += 0.2; 
+    else if(6 <= index && index < 10 ){
+
+      if(index == 6)
+        x = -0.6;
+
+      asteroid.m_translation = {x, 0.7};
+      x += 0.4; 
     }
-     else if(x < 5){
-      asteroid.m_translation = {x - 3.8, 0.5};
-      x += 0.2; 
+    else if(10 <= index && index <= CONST_QUANTIDADE_NAVES){
+
+      if(index == 10)
+        x = -0.8;
+
+      asteroid.m_translation = {x, 0.5};
+      x += 0.4; 
     }
+    index++;
   }
 }
    
