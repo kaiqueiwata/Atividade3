@@ -165,7 +165,7 @@ void OpenGLWindow::checkCollisions() {
     auto asteroidTranslation{asteroid.m_translation};
     auto distance{glm::distance(m_ship.m_translation, asteroidTranslation)};
 
-    if (distance < m_ship.m_scale * 0.9f + asteroid.m_scale * 0.85f) {
+    if (distance < m_ship.m_scale * 0.9f + asteroid.m_scale * 3.0f) {
       m_gameData.m_state = State::GameOver;
       m_restartWaitTimer.restart();
     }
@@ -182,7 +182,7 @@ void OpenGLWindow::checkCollisions() {
           auto distance{
               glm::distance(bullet.m_translation, asteroidTranslation)};
 
-          if (distance < m_bullets.m_scale + asteroid.m_scale * 0.85f) {
+          if (distance < m_bullets.m_scale + asteroid.m_scale * 3.0f) {
             asteroid.m_hit = true;
             bullet.m_dead = true;
           }

@@ -80,8 +80,9 @@ void Asteroids::terminateGL() {
 }
 
 void Asteroids::update(float deltaTime) {
+
   for (auto &asteroid : m_asteroids) {
-    asteroid.m_translation.y -= 0.5 * deltaTime;
+    asteroid.m_translation.y -= 0.4 * deltaTime;
     asteroid.m_rotation = glm::wrapAngle(
         asteroid.m_rotation + asteroid.m_angularVelocity * deltaTime);
   
