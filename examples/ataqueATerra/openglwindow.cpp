@@ -228,7 +228,7 @@ void OpenGLWindow::checkCollisions() {
 
 void OpenGLWindow::checkWinCondition() {
   if (m_asteroids.m_enemies.empty()) {
-    m_gameData.fator_vel_jogo += 01.f;
+    m_gameData.fator_vel_jogo += 0.1f;
     m_asteroids.initializeGL(m_objectsProgram);
     m_restartWaitTimer.restart();
   }
