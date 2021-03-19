@@ -79,9 +79,9 @@ void OpenGLWindow::initializeGL() {
 void OpenGLWindow::restart() {
   m_gameData.m_state = State::Playing;
 
-  m_starLayers.initializeGL(m_starsProgram, 25);
+  m_starLayers.initializeGL(m_starsProgram, 0);
   m_ship.initializeGL(m_objectsProgram);
-  m_asteroids.initializeGL(m_objectsProgram, 3);
+  m_asteroids.initializeGL(m_objectsProgram, 4);
   m_bullets.initializeGL(m_objectsProgram);
 }
 
@@ -97,7 +97,7 @@ void OpenGLWindow::update() {
 
   m_ship.update(m_gameData, deltaTime);
   m_starLayers.update(m_ship, deltaTime);
-  m_asteroids.update(m_ship, deltaTime);
+  m_asteroids.update(deltaTime);
   m_bullets.update(m_ship, m_gameData, deltaTime);
 
   if (m_gameData.m_state == State::Playing) {
@@ -192,19 +192,6 @@ void OpenGLWindow::checkCollisions() {
       }
     }
 
-    // Break asteroids marked as hit
-    for (auto &asteroid : m_asteroids.m_asteroids) {
-      if (asteroid.m_hit && asteroid.m_scale > 0.10f) {
-        std::uniform_real_distribution<float> m_randomDist{-1.0f, 1.0f};
-        std::generate_n(std::back_inserter(m_asteroids.m_asteroids), 3, [&]() {
-          glm::vec2 offset{m_randomDist(m_randomEngine),
-                           m_randomDist(m_randomEngine)};
-          return m_asteroids.createAsteroid(
-              asteroid.m_translation + offset * asteroid.m_scale * 0.5f,
-              asteroid.m_scale * 0.5f);
-        });
-      }
-    }
 
     m_asteroids.m_asteroids.remove_if(
         [](const Asteroids::Asteroid &a) { return a.m_hit; });

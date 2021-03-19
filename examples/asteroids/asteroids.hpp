@@ -16,7 +16,7 @@ class Asteroids {
   void paintGL();
   void terminateGL();
 
-  void update(const Ship &ship, float deltaTime);
+  void update(float deltaTime);
 
  private:
   friend OpenGLWindow;

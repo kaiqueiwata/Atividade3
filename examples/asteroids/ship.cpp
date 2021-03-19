@@ -14,7 +14,9 @@ void Ship::initializeGL(GLuint program) {
 
   m_rotation = 0.0f;
   m_translation = glm::vec2(0);
+  m_translation.y = -0.8; // Posiciona nave em baixo
   m_velocity = glm::vec2(0);
+
 
   // clang-format off
   std::array<glm::vec2, 29> positions{
@@ -157,11 +159,16 @@ void Ship::terminateGL() {
 }
 
 void Ship::update(const GameData &gameData, float deltaTime) {
-  // Rotate
-  if (gameData.m_input[static_cast<size_t>(Input::Left)])
-    m_translation.x -= deltaTime;
-  if (gameData.m_input[static_cast<size_t>(Input::Right)])
-    m_translation.x += deltaTime;
+  // Horizontal Translate 
+  if (m_translation.x >= -0.87){ 
+    if (gameData.m_input[static_cast<size_t>(Input::Left)])
+     m_translation.x -= 1.5 * deltaTime;
+  }
+
+  if (m_translation.x <= +0.87){
+    if (gameData.m_input[static_cast<size_t>(Input::Right)])
+      m_translation.x += 1.5 * deltaTime;
+  }
   // Apply thrust
   if (gameData.m_input[static_cast<size_t>(Input::Up)] &&
       gameData.m_state == State::Playing) {
