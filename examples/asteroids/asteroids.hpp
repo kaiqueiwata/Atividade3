@@ -27,7 +27,7 @@ class Asteroids {
   GLint m_translationLoc{};
   GLint m_scaleLoc{};
 
-  int CONST_QUANTIDADE_NAVES = 28;
+  int CONST_QUANTIDADE_NAVES = 14;
 
   struct Asteroid {
     GLuint m_vao{};
