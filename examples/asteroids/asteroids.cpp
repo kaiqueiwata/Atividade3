@@ -25,11 +25,14 @@ void Asteroids::initializeGL(GLuint program, int quantity) {
      asteroid = createAsteroid();
       float i;
      // Make sure the asteroid won't collide with the ship
-     do {
-       i += 0.5; 
-       asteroid.m_translation = {-1+i, 1};
-      } while (glm::length(asteroid.m_translation) < 0.5f);
-   }
+     
+       do {
+         i += 0.5; 
+        asteroid.m_translation = {-0.8 + i, 1};
+         } while (glm::length(asteroid.m_translation) < 0.5f);
+     }
+    
+
    
   
 
