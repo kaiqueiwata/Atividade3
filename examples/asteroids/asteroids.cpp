@@ -85,8 +85,7 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation,
   auto &re{m_randomEngine};  // Shortcut
 
   // Randomly choose the number of sides
-  std::uniform_int_distribution<int> randomSides(6, 20);
-  asteroid.m_polygonSides = randomSides(re);
+  asteroid.m_polygonSides = 16;
 
   // Choose a random color (actually, a grayscale)
   std::uniform_real_distribution<float> randomIntensity(0.5f, 1.0f);
@@ -94,7 +93,7 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation,
 
   asteroid.m_color.a = 1.0f;
   asteroid.m_rotation = 0.0f;
-  asteroid.m_scale = scale;
+  asteroid.m_scale = 0.05;
   asteroid.m_translation = translation;
 
   // Choose a random angular velocity
@@ -105,15 +104,32 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation,
   asteroid.m_velocity = glm::normalize(direction) / 7.0f;
 
   // Create geometry
-  std::vector<glm::vec2> positions(0);
-  positions.emplace_back(0, 0);
-  auto step{M_PI * 2 / asteroid.m_polygonSides};
-  std::uniform_real_distribution<float> randomRadius(0.8f, 1.0f);
-  for (auto angle : iter::range(0.0, M_PI * 2, step)) {
-    auto radius{randomRadius(re)};
-    positions.emplace_back(radius * std::cos(angle), radius * std::sin(angle));
-  }
-  positions.push_back(positions.at(1));
+  // std::vector<glm::vec2> positions(0);
+  std::array<glm::vec2, 16> positions{
+
+      // Ship body
+      //NÓ RAIZ para ele poder renderizar corretamente o GL_TRIANGLE_FAN
+      glm::vec2{0.0f, 0.0f},
+
+      glm::vec2{+00.5f, -02.0f}, glm::vec2{+00.5f, -05.0f}, //1,2
+      glm::vec2{+03.0f, -00.5f}, glm::vec2{+03.0f, +01.5f}, //3,4
+      glm::vec2{+01.5f, +02.5f}, glm::vec2{+00.5f, +02.5f}, //5,6
+      glm::vec2{+00.5f, +02.0f}, glm::vec2{-00.5f, +02.0f},  //7,8
+      glm::vec2{-00.5f, +02.5f}, glm::vec2{-01.5f, +02.5f},  //9,10
+      glm::vec2{-03.0f, +01.5f}, glm::vec2{-03.0f, -00.5f}, //11,12
+      glm::vec2{-00.5f, -05.0f}, glm::vec2{-00.5f, -02.0f}, //13,14
+
+      //O primeiro nó novamente para ele fechar o leque
+      glm::vec2{+00.5f, -02.0f},
+      };
+
+  // auto step{M_PI * 2 / asteroid.m_polygonSides};
+  // std::uniform_real_distribution<float> randomRadius(0.8f, 1.0f);
+  // for (auto angle : iter::range(0.0, M_PI * 2, step)) {
+  //   auto radius{randomRadius(re)};
+  //   positions.emplace_back(radius * std::cos(angle), radius * std::sin(angle));
+  // }
+  // positions.push_back(positions.at(1));
 
   // Generate VBO
   glGenBuffers(1, &asteroid.m_vbo);
