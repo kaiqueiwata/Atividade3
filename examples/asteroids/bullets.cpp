@@ -54,7 +54,7 @@ void Bullets::paintGL() {
   glUseProgram(m_program);
 
   glBindVertexArray(m_vao);
-  glUniform4f(m_colorLoc, 1, 1, 1, 1);
+  glUniform4f(m_colorLoc, 0.2f, 1, 1, 1);
   glUniform1f(m_rotationLoc, 0);
   glUniform1f(m_scaleLoc, m_scale);
 
@@ -97,8 +97,6 @@ void Bullets::update(Ship &ship, const GameData &gameData, float deltaTime) {
       bullet.m_translation = ship.m_translation - right * cannonOffset;
       m_bullets.push_back(bullet);
 
-      // Moves ship in the opposite direction
-      ship.m_velocity -= forward * 0.1f;
     }
   }
 

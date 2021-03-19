@@ -79,7 +79,7 @@ void OpenGLWindow::initializeGL() {
 void OpenGLWindow::restart() {
   m_gameData.m_state = State::Playing;
 
-  m_starLayers.initializeGL(m_starsProgram, 0);
+  m_starLayers.initializeGL(m_starsProgram, 25);
   m_ship.initializeGL(m_objectsProgram);
   m_asteroids.initializeGL(m_objectsProgram, 28);
   m_bullets.initializeGL(m_objectsProgram);

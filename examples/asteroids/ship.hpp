@@ -33,8 +33,7 @@ class Ship {
   GLuint m_vao{};
   GLuint m_vbo{};
   GLuint m_ebo{};
-
-  glm::vec4 m_color{1};
+  glm::vec4 m_color{0.5f, 0.5f, 1, 1};
   float m_rotation{};
   float m_scale{0.125f};
   glm::vec2 m_translation{glm::vec2(0)};
