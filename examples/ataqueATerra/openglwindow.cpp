@@ -85,7 +85,7 @@ void OpenGLWindow::initializeGL() {
 
 void OpenGLWindow::restart() {
   m_gameData.m_state = State::Playing;
-
+  m_gameData.PONTOS = 0;
   m_starLayers.initializeGL(m_starsProgram, 25);
   m_ship.initializeGL(m_objectsProgram);
   m_enemies.initializeGL(m_objectsProgram);
@@ -103,8 +103,8 @@ void OpenGLWindow::update() {
   }
 
   m_ship.update(m_gameData, deltaTime);
-  m_starLayers.update(m_ship, deltaTime);
   m_enemies.update(m_gameData, deltaTime);
+  m_starLayers.update(deltaTime);
   m_bullets.update(m_ship, m_gameData, deltaTime);
 
   if (m_gameData.m_state == State::Playing) {
@@ -151,7 +151,7 @@ void OpenGLWindow::paintUI() {
     } 
     else {
 
-      auto size{ImVec2(400, 85)};
+      auto size{ImVec2(340, 220)};
       auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
                            (m_viewportHeight - size.y) / 2.0f)};
 
@@ -163,6 +163,7 @@ void OpenGLWindow::paintUI() {
 
       if (m_gameData.m_state == State::GameOver) {
         ImGui::Text("Fim de Jogo!");
+        ImGui::Text("Score %d pts", m_gameData.PONTOS);
       }
 
       ImGui::PopFont();
@@ -196,7 +197,6 @@ void OpenGLWindow::checkCollisions() {
 
     if (distance < m_ship.m_scale * 0.9f + enemy.m_scale * 3.0f) {
       m_gameData.m_state = State::GameOver;
-      m_gameData.PONTOS = 0;
       m_restartWaitTimer.restart();
     }
   }

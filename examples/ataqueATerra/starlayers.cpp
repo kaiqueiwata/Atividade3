@@ -94,7 +94,7 @@ void StarLayers::terminateGL() {
   }
 }
 
-void StarLayers::update(const Ship &ship, float deltaTime) {
+void StarLayers::update(float deltaTime) {
   for (auto &&[index, layer] : iter::enumerate(m_starLayers)) {
     auto layerSpeedScale{1.0f / (index + 2.0f)};
     layer.m_translation.y -= 0.5*deltaTime ;
