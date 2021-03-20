@@ -151,7 +151,7 @@ void OpenGLWindow::paintUI() {
     } 
     else {
 
-      auto size{ImVec2(340, 220)};
+      auto size{ImVec2(340, 180)};
       auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
                            (m_viewportHeight - size.y) / 2.0f)};
 
@@ -163,7 +163,7 @@ void OpenGLWindow::paintUI() {
 
       if (m_gameData.m_state == State::GameOver) {
         ImGui::Text("Fim de Jogo!");
-        ImGui::Text("Score %d pts", m_gameData.PONTOS);
+        ImGui::Text("   %d pts", m_gameData.PONTOS);
       }
 
       ImGui::PopFont();
