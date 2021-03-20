@@ -1,5 +1,5 @@
-#ifndef ASTEROIDS_HPP_
-#define ASTEROIDS_HPP_
+#ifndef ENEMIES_HPP_
+#define ENEMIES_HPP_
 
 #include <list>
 #include <random>
@@ -53,7 +53,7 @@ class Enemies {
   std::default_random_engine m_randomEngine;
   std::uniform_real_distribution<float> m_randomDist{-1.0f, 1.0f};
 
-  Enemies::Enemy createAsteroid(glm::vec2 translation = glm::vec2(0));
+  Enemies::Enemy createEnemy(glm::vec2 translation = glm::vec2(0));
 };
 
 #endif

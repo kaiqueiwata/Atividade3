@@ -88,7 +88,7 @@ void OpenGLWindow::restart() {
 
   m_starLayers.initializeGL(m_starsProgram, 25);
   m_ship.initializeGL(m_objectsProgram);
-  m_asteroids.initializeGL(m_objectsProgram);
+  m_enemies.initializeGL(m_objectsProgram);
   m_bullets.initializeGL(m_objectsProgram);
 }
 
@@ -104,7 +104,7 @@ void OpenGLWindow::update() {
 
   m_ship.update(m_gameData, deltaTime);
   m_starLayers.update(m_ship, deltaTime);
-  m_asteroids.update(m_gameData, deltaTime);
+  m_enemies.update(m_gameData, deltaTime);
   m_bullets.update(m_ship, m_gameData, deltaTime);
 
   if (m_gameData.m_state == State::Playing) {
@@ -120,7 +120,7 @@ void OpenGLWindow::paintGL() {
   glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 
   m_starLayers.paintGL();
-  m_asteroids.paintGL();
+  m_enemies.paintGL();
   m_bullets.paintGL();
   m_ship.paintGL(m_gameData);
 }
@@ -182,38 +182,37 @@ void OpenGLWindow::terminateGL() {
   glDeleteProgram(m_starsProgram);
   glDeleteProgram(m_objectsProgram);
 
-  m_asteroids.terminateGL();
+  m_enemies.terminateGL();
   m_bullets.terminateGL();
   m_ship.terminateGL();
   m_starLayers.terminateGL();
 }
 
 void OpenGLWindow::checkCollisions() {
-  // Check collision between ship and asteroids
-  for (auto &asteroid : m_asteroids.m_enemies) {
-    auto asteroidTranslation{asteroid.m_translation};
-    auto distance{glm::distance(m_ship.m_translation, asteroidTranslation)};
+  // colisão entre a nave e os inimigos
+  for (auto &enemy : m_enemies.m_enemies) {
+    auto enemyTranslation{enemy.m_translation};
+    auto distance{glm::distance(m_ship.m_translation, enemyTranslation)};
 
-    if (distance < m_ship.m_scale * 0.9f + asteroid.m_scale * 3.0f) {
+    if (distance < m_ship.m_scale * 0.9f + enemy.m_scale * 3.0f) {
       m_gameData.m_state = State::GameOver;
       m_gameData.PONTOS = 0;
       m_restartWaitTimer.restart();
     }
   }
-
-  // Check collision between bullets and asteroids
+  // colisão entre as balas e os inimigos
   for (auto &bullet : m_bullets.m_bullets) {
     if (bullet.m_dead) continue;
 
-    for (auto &asteroid : m_asteroids.m_enemies) {
+    for (auto &enemy : m_enemies.m_enemies) {
       for (auto i : {-2, 0, 2}) {
         for (auto j : {-2, 0, 2}) {
-          auto asteroidTranslation{asteroid.m_translation + glm::vec2(i, j)};
+          auto enemyTranslation{enemy.m_translation + glm::vec2(i, j)};
           auto distance{
-              glm::distance(bullet.m_translation, asteroidTranslation)};
+              glm::distance(bullet.m_translation, enemyTranslation)};
 
-          if (distance < m_bullets.m_scale + asteroid.m_scale * 3.0f) {
-            asteroid.m_hit = true;
+          if (distance < m_bullets.m_scale + enemy.m_scale * 3.0f) {
+            enemy.m_hit = true;
             bullet.m_dead = true;
             m_gameData.PONTOS++;
           }
@@ -221,15 +220,15 @@ void OpenGLWindow::checkCollisions() {
       }
     }
 
-    m_asteroids.m_enemies.remove_if(
+    m_enemies.m_enemies.remove_if(
         [](const Enemies::Enemy &a) { return a.m_hit; });
   }
 }
 
 void OpenGLWindow::checkWinCondition() {
-  if (m_asteroids.m_enemies.empty()) {
+  if (m_enemies.m_enemies.empty()) {
     m_gameData.fator_vel_jogo += 0.1f;
-    m_asteroids.initializeGL(m_objectsProgram);
+    m_enemies.initializeGL(m_objectsProgram);
     m_restartWaitTimer.restart();
   }
 }
