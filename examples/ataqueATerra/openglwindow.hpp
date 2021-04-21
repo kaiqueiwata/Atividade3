@@ -6,7 +6,7 @@
 #include <random>
 
 #include "abcg.hpp"
-#include "asteroids.hpp"
+#include "enemies.hpp"
 #include "bullets.hpp"
 #include "ship.hpp"
 #include "starlayers.hpp"
@@ -29,14 +29,15 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   GameData m_gameData;
 
-  Asteroids m_asteroids;
+  Enemies m_enemies;
   Bullets m_bullets;
   Ship m_ship;
   StarLayers m_starLayers;
 
   abcg::ElapsedTimer m_restartWaitTimer;
 
-  ImFont* m_font{};
+  ImFont* m_font_pts{};
+  ImFont* m_font_game_over{};
 
   std::default_random_engine m_randomEngine;
 

@@ -44,23 +44,22 @@ void OpenGLWindow::handleEvent(SDL_Event &event) {
     if (event.button.button == SDL_BUTTON_RIGHT)
       m_gameData.m_input.reset(static_cast<size_t>(Input::Up));
   }
-  if (event.type == SDL_MOUSEMOTION) {
-    glm::ivec2 mousePosition;
-    SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
-
-    glm::vec2 direction{glm::vec2{mousePosition.x - m_viewportWidth / 2,
-                                  mousePosition.y - m_viewportHeight / 2}};
-    direction.y = -direction.y;
-    m_ship.setRotation(std::atan2(direction.y, direction.x) - M_PI_2);
-  }
 }
 
 void OpenGLWindow::initializeGL() {
   // Load a new font
   ImGuiIO &io{ImGui::GetIO()};
-  auto filename{getAssetsPath() + "Inconsolata-Medium.ttf"};
-  m_font = io.Fonts->AddFontFromFileTTF(filename.c_str(), 60.0f);
-  if (m_font == nullptr) {
+
+  //letra da pontuação é menor
+  auto filenameAquire{getAssetsPath() + "AquireBold-8Ma60.otf"};
+  m_font_pts = io.Fonts->AddFontFromFileTTF(filenameAquire.c_str(), 30.0f);
+  if (m_font_pts == nullptr) {
+    throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
+  }
+ 
+  //letra do game over é maior
+  m_font_game_over = io.Fonts->AddFontFromFileTTF(filenameAquire.c_str(), 45.0f);
+  if (m_font_pts == nullptr) {
     throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
   }
 
@@ -86,10 +85,10 @@ void OpenGLWindow::initializeGL() {
 
 void OpenGLWindow::restart() {
   m_gameData.m_state = State::Playing;
-
+  m_gameData.PONTOS = 0;
   m_starLayers.initializeGL(m_starsProgram, 25);
   m_ship.initializeGL(m_objectsProgram);
-  m_asteroids.initializeGL(m_objectsProgram, 3);
+  m_enemies.initializeGL(m_objectsProgram);
   m_bullets.initializeGL(m_objectsProgram);
 }
 
@@ -104,8 +103,8 @@ void OpenGLWindow::update() {
   }
 
   m_ship.update(m_gameData, deltaTime);
-  m_starLayers.update(m_ship, deltaTime);
-  m_asteroids.update(m_ship, deltaTime);
+  m_enemies.update(m_gameData, deltaTime);
+  m_starLayers.update(deltaTime);
   m_bullets.update(m_ship, m_gameData, deltaTime);
 
   if (m_gameData.m_state == State::Playing) {
@@ -121,7 +120,7 @@ void OpenGLWindow::paintGL() {
   glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 
   m_starLayers.paintGL();
-  m_asteroids.paintGL();
+  m_enemies.paintGL();
   m_bullets.paintGL();
   m_ship.paintGL(m_gameData);
 }
@@ -130,25 +129,46 @@ void OpenGLWindow::paintUI() {
   abcg::OpenGLWindow::paintUI();
 
   {
-    auto size{ImVec2(300, 85)};
-    auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
-                         (m_viewportHeight - size.y) / 2.0f)};
-    ImGui::SetNextWindowPos(position);
-    ImGui::SetNextWindowSize(size);
+
     ImGuiWindowFlags flags{ImGuiWindowFlags_NoBackground |
-                           ImGuiWindowFlags_NoTitleBar |
-                           ImGuiWindowFlags_NoInputs};
-    ImGui::Begin(" ", nullptr, flags);
-    ImGui::PushFont(m_font);
+                            ImGuiWindowFlags_NoTitleBar |
+                            ImGuiWindowFlags_NoInputs};
+    if (m_gameData.m_state != State::GameOver) {
 
-    if (m_gameData.m_state == State::GameOver) {
-      ImGui::Text("Game Over!");
-    } else if (m_gameData.m_state == State::Win) {
-      ImGui::Text("*You Win!*");
+      auto tamanhoDisplayPontuacao{ImVec2(150, 50)};
+      auto posicaoDisplayPontuacao{
+          ImVec2(m_viewportWidth - tamanhoDisplayPontuacao.x - 5,
+                 m_viewportHeight - tamanhoDisplayPontuacao.y - 5)};
+
+      ImGui::SetNextWindowPos(posicaoDisplayPontuacao);
+      ImGui::SetNextWindowSize(tamanhoDisplayPontuacao);
+      ImGui::Begin(" ", nullptr, flags);
+
+      ImGui::PushFont(m_font_pts);
+      ImGui::Text("%d pts", m_gameData.PONTOS);
+      ImGui::PopFont();
+      ImGui::End();
+    } 
+    else {
+
+      auto size{ImVec2(340, 180)};
+      auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
+                           (m_viewportHeight - size.y) / 2.0f)};
+
+      ImGui::SetNextWindowPos(position);
+      ImGui::SetNextWindowSize(size);
+
+      ImGui::Begin(" ", nullptr, flags);
+      ImGui::PushFont(m_font_game_over);
+
+      if (m_gameData.m_state == State::GameOver) {
+        ImGui::Text("Fim de Jogo!");
+        ImGui::Text("   %d pts", m_gameData.PONTOS);
+      }
+
+      ImGui::PopFont();
+      ImGui::End();
     }
-
-    ImGui::PopFont();
-    ImGui::End();
   }
 }
 
@@ -163,65 +183,52 @@ void OpenGLWindow::terminateGL() {
   glDeleteProgram(m_starsProgram);
   glDeleteProgram(m_objectsProgram);
 
-  m_asteroids.terminateGL();
+  m_enemies.terminateGL();
   m_bullets.terminateGL();
   m_ship.terminateGL();
   m_starLayers.terminateGL();
 }
 
 void OpenGLWindow::checkCollisions() {
-  // Check collision between ship and asteroids
-  for (auto &asteroid : m_asteroids.m_asteroids) {
-    auto asteroidTranslation{asteroid.m_translation};
-    auto distance{glm::distance(m_ship.m_translation, asteroidTranslation)};
+  // colisão entre a nave e os inimigos
+  for (auto &enemy : m_enemies.m_enemies) {
+    auto enemyTranslation{enemy.m_translation};
+    auto distance{glm::distance(m_ship.m_translation, enemyTranslation)};
 
-    if (distance < m_ship.m_scale * 0.9f + asteroid.m_scale * 0.85f) {
+    if (distance < m_ship.m_scale * 0.9f + enemy.m_scale * 3.0f) {
       m_gameData.m_state = State::GameOver;
       m_restartWaitTimer.restart();
     }
   }
-
-  // Check collision between bullets and asteroids
+  // colisão entre as balas e os inimigos
   for (auto &bullet : m_bullets.m_bullets) {
     if (bullet.m_dead) continue;
 
-    for (auto &asteroid : m_asteroids.m_asteroids) {
+    for (auto &enemy : m_enemies.m_enemies) {
       for (auto i : {-2, 0, 2}) {
         for (auto j : {-2, 0, 2}) {
-          auto asteroidTranslation{asteroid.m_translation + glm::vec2(i, j)};
+          auto enemyTranslation{enemy.m_translation + glm::vec2(i, j)};
           auto distance{
-              glm::distance(bullet.m_translation, asteroidTranslation)};
+              glm::distance(bullet.m_translation, enemyTranslation)};
 
-          if (distance < m_bullets.m_scale + asteroid.m_scale * 0.85f) {
-            asteroid.m_hit = true;
+          if (distance < m_bullets.m_scale + enemy.m_scale * 3.0f) {
+            enemy.m_hit = true;
             bullet.m_dead = true;
+            m_gameData.PONTOS++;
           }
         }
       }
     }
 
-    // Break asteroids marked as hit
-    for (auto &asteroid : m_asteroids.m_asteroids) {
-      if (asteroid.m_hit && asteroid.m_scale > 0.10f) {
-        std::uniform_real_distribution<float> m_randomDist{-1.0f, 1.0f};
-        std::generate_n(std::back_inserter(m_asteroids.m_asteroids), 3, [&]() {
-          glm::vec2 offset{m_randomDist(m_randomEngine),
-                           m_randomDist(m_randomEngine)};
-          return m_asteroids.createAsteroid(
-              asteroid.m_translation + offset * asteroid.m_scale * 0.5f,
-              asteroid.m_scale * 0.5f);
-        });
-      }
-    }
-
-    m_asteroids.m_asteroids.remove_if(
-        [](const Asteroids::Asteroid &a) { return a.m_hit; });
+    m_enemies.m_enemies.remove_if(
+        [](const Enemies::Enemy &a) { return a.m_hit; });
   }
 }
 
 void OpenGLWindow::checkWinCondition() {
-  if (m_asteroids.m_asteroids.empty()) {
-    m_gameData.m_state = State::Win;
+  if (m_enemies.m_enemies.empty()) {
+    m_gameData.fator_vel_jogo += 0.1f;
+    m_enemies.initializeGL(m_objectsProgram);
     m_restartWaitTimer.restart();
   }
 }

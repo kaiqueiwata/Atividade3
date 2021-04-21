@@ -1,11 +1,7 @@
-# ABCg
+Kaique Augusto Iwata 21079615
+Victor Guilherme Antunes 11071816
 
-Development framework accompanying the course [MCTA008-17 Computer Graphics](http://professor.ufabc.edu.br/~harlen.batagelo/cg/) at [UFABC](https://www.ufabc.edu.br/).
+Jogo baseado no classico Megamania do Atari, uma nave que se move horizontalmente e atira para destruir os inimigos exibidos na tela, a dificultidade e elevada a cada onda de inimigos destruidos.
 
-## Author
 
-Harlen Batagelo
 
-## License
-
-MIT

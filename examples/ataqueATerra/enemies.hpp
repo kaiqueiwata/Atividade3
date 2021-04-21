@@ -1,5 +1,5 @@
-#ifndef ASTEROIDS_HPP_
-#define ASTEROIDS_HPP_
+#ifndef ENEMIES_HPP_
+#define ENEMIES_HPP_
 
 #include <list>
 #include <random>
@@ -10,13 +10,13 @@
 
 class OpenGLWindow;
 
-class Asteroids {
+class Enemies {
  public:
-  void initializeGL(GLuint program, int quantity);
+  void initializeGL(GLuint program);
   void paintGL();
   void terminateGL();
 
-  void update(const Ship &ship, float deltaTime);
+  void update(GameData m_gameData, float deltaTime);
 
  private:
   friend OpenGLWindow;
@@ -26,8 +26,15 @@ class Asteroids {
   GLint m_rotationLoc{};
   GLint m_translationLoc{};
   GLint m_scaleLoc{};
- 
-  struct Asteroid {
+
+  int CONST_QUANTIDADE_NAVES = 14;
+
+  float CONST_TEMPO_ZIG_ZAG = 1;
+  float tempo_atual_restante = CONST_TEMPO_ZIG_ZAG;
+  int sentido = +1;
+
+
+  struct Enemy {
     GLuint m_vao{};
     GLuint m_vbo{};
 
@@ -41,13 +48,12 @@ class Asteroids {
     glm::vec2 m_velocity{glm::vec2(0)};
   };
 
-  std::list<Asteroid> m_asteroids;
+  std::list<Enemy> m_enemies;
 
   std::default_random_engine m_randomEngine;
   std::uniform_real_distribution<float> m_randomDist{-1.0f, 1.0f};
 
-  Asteroids::Asteroid createAsteroid(glm::vec2 translation = glm::vec2(0),
-                                     float scale = 0.25f);
+  Enemies::Enemy createEnemy(glm::vec2 translation = glm::vec2(0));
 };
 
 #endif

@@ -1,0 +1,16 @@
+Abordagem 1:
+    Alterar o game asteroids até ele ficar igual ao game que queremos fazer
+        1 - descentralizar a nave: fazer com que a "camêra" não fique seguindo a nave ou que a nave não fique sempre no centro da tela
+        2 - substituir os asteroids pelas naves inimigas
+        3 - criar colisão das naves com a nave principal
+
+Abordagem 2:
+    Criar um jogo do zero:
+    /---1: começar criando um objecto simples (uma bola, quadrado, triangulo,etc)   e fazer ele se mexer com as setas do teclado ou WASD
+    |---2: adicionar tiros saindo desse objeto
+    |---3: adicionar as naves inimigas
+    |---4: adicionar colisões
+    |---5: remodelar o objeto pra ser uma nave
+    |---6: talvez criar um cenário de fundo
+    |
+    \--> tentando se espelhar no asteroids
