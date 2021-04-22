@@ -22,40 +22,55 @@ struct hash<Vertex> {
 
 void OpenGLWindow::handleEvent(SDL_Event& ev) {
   if (ev.type == SDL_KEYDOWN) {
-    if (ev.key.keysym.sym == SDLK_UP || ev.key.keysym.sym == SDLK_w)
+    // Ir pra frente e pra tras
+    if (ev.key.keysym.sym == SDLK_w)
       m_dollySpeed = 1.0f;
-    if (ev.key.keysym.sym == SDLK_DOWN || ev.key.keysym.sym == SDLK_s)
+    if (ev.key.keysym.sym == SDLK_s)
       m_dollySpeed = -1.0f;
-    if (ev.key.keysym.sym == SDLK_LEFT || ev.key.keysym.sym == SDLK_a)
+
+    // Olhar pra direita e pra esquerda
+    if (ev.key.keysym.sym == SDLK_LEFT)
       m_panSpeed = -1.0f;
-    if (ev.key.keysym.sym == SDLK_RIGHT || ev.key.keysym.sym == SDLK_d)
+    if (ev.key.keysym.sym == SDLK_RIGHT)
       m_panSpeed = 1.0f;
-    if (ev.key.keysym.sym == SDLK_r)
+      
+    //Olhar pra cima e pra baixo
+    if (ev.key.keysym.sym == SDLK_UP)
       m_vertPanSpeed = -1.0f;
-    if (ev.key.keysym.sym == SDLK_f)
+    if (ev.key.keysym.sym == SDLK_DOWN)
       m_vertPanSpeed = 1.0f;
-    if (ev.key.keysym.sym == SDLK_q) m_truckSpeed = -1.0f;
-    if (ev.key.keysym.sym == SDLK_e) m_truckSpeed = 1.0f;
+
+    //Andar de um lado para outro
+    if (ev.key.keysym.sym == SDLK_a) 
+      m_truckSpeed = -1.0f;
+    if (ev.key.keysym.sym == SDLK_d) 
+      m_truckSpeed = 1.0f;
+
   }
   if (ev.type == SDL_KEYUP) {
-    if ((ev.key.keysym.sym == SDLK_UP || ev.key.keysym.sym == SDLK_w) &&
-        m_dollySpeed > 0)
+    // Parar movimento de ir pra frente e pra tras
+    if (ev.key.keysym.sym == SDLK_w && m_dollySpeed > 0)
       m_dollySpeed = 0.0f;
-    if ((ev.key.keysym.sym == SDLK_DOWN || ev.key.keysym.sym == SDLK_s) &&
-        m_dollySpeed < 0)
+    if ( ev.key.keysym.sym == SDLK_s && m_dollySpeed < 0)
       m_dollySpeed = 0.0f;
-    if ((ev.key.keysym.sym == SDLK_LEFT || ev.key.keysym.sym == SDLK_a) &&
-        m_panSpeed < 0)
+
+    // Parar de virar a camera de lado
+    if (ev.key.keysym.sym == SDLK_LEFT && m_panSpeed < 0)
       m_panSpeed = 0.0f;
-    if ((ev.key.keysym.sym == SDLK_RIGHT || ev.key.keysym.sym == SDLK_d) &&
-        m_panSpeed > 0)
+    if (ev.key.keysym.sym == SDLK_RIGHT && m_panSpeed > 0)
       m_panSpeed = 0.0f;
-    if (ev.key.keysym.sym == SDLK_r && m_vertPanSpeed < 0)
+    
+    //Parar de virar a camera verticalmente
+    if (ev.key.keysym.sym == SDLK_UP && m_vertPanSpeed < 0)
       m_vertPanSpeed = 0.0f;
-    if (ev.key.keysym.sym == SDLK_f && m_vertPanSpeed > 0)
+    if (ev.key.keysym.sym == SDLK_DOWN && m_vertPanSpeed > 0)
       m_vertPanSpeed = 0.0f;
-    if (ev.key.keysym.sym == SDLK_q && m_truckSpeed < 0) m_truckSpeed = 0.0f;
-    if (ev.key.keysym.sym == SDLK_e && m_truckSpeed > 0) m_truckSpeed = 0.0f;
+    
+    //Parar de moviementar para os lados
+    if (ev.key.keysym.sym == SDLK_a && m_truckSpeed < 0) 
+      m_truckSpeed = 0.0f;
+    if (ev.key.keysym.sym == SDLK_d && m_truckSpeed > 0) 
+      m_truckSpeed = 0.0f;
   }
 }
 
