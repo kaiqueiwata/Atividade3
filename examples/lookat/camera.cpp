@@ -14,7 +14,7 @@ void Camera::computeViewMatrix() {
 
 void Camera::dolly(float speed) {
   // Compute forward vector (view direction)
-  glm::vec3 forward = glm::normalize(m_at - m_eye);
+  glm::vec3 forward = glm::normalize(m_forward);
 
   // Move eye and center forward (speed > 0) or backward (speed < 0)
   m_eye += forward * speed;
@@ -42,6 +42,19 @@ void Camera::pan(float speed) {
   // Rotate camera around its local y axis
   transform = glm::translate(transform, m_eye);
   transform = glm::rotate(transform, -speed, m_up);
+  transform = glm::translate(transform, -m_eye);
+
+  m_at = transform * glm::vec4(m_at, 1.0f);
+
+  computeViewMatrix();
+}
+
+void Camera::vertical_pan(float speed) {
+  glm::mat4 transform{glm::mat4(1.0f)};
+
+  // Rotate camera around its local y axis
+  transform = glm::translate(transform, m_eye);
+  transform = glm::rotate(transform, -speed, m_side);
   transform = glm::translate(transform, -m_eye);
 
   m_at = transform * glm::vec4(m_at, 1.0f);

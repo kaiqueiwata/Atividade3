@@ -30,6 +30,10 @@ void OpenGLWindow::handleEvent(SDL_Event& ev) {
       m_panSpeed = -1.0f;
     if (ev.key.keysym.sym == SDLK_RIGHT || ev.key.keysym.sym == SDLK_d)
       m_panSpeed = 1.0f;
+    if (ev.key.keysym.sym == SDLK_r)
+      m_vertPanSpeed = -1.0f;
+    if (ev.key.keysym.sym == SDLK_f)
+      m_vertPanSpeed = 1.0f;
     if (ev.key.keysym.sym == SDLK_q) m_truckSpeed = -1.0f;
     if (ev.key.keysym.sym == SDLK_e) m_truckSpeed = 1.0f;
   }
@@ -46,6 +50,10 @@ void OpenGLWindow::handleEvent(SDL_Event& ev) {
     if ((ev.key.keysym.sym == SDLK_RIGHT || ev.key.keysym.sym == SDLK_d) &&
         m_panSpeed > 0)
       m_panSpeed = 0.0f;
+    if (ev.key.keysym.sym == SDLK_r && m_vertPanSpeed < 0)
+      m_vertPanSpeed = 0.0f;
+    if (ev.key.keysym.sym == SDLK_f && m_vertPanSpeed > 0)
+      m_vertPanSpeed = 0.0f;
     if (ev.key.keysym.sym == SDLK_q && m_truckSpeed < 0) m_truckSpeed = 0.0f;
     if (ev.key.keysym.sym == SDLK_e && m_truckSpeed > 0) m_truckSpeed = 0.0f;
   }
@@ -62,7 +70,7 @@ void OpenGLWindow::initializeGL() {
                                     getAssetsPath() + "lookat.frag");
 
   // Load model
-  loadModelFromFile(getAssetsPath() + "bunny.obj");
+  loadModelFromFile(getAssetsPath() + "Gun.obj");
 
   // Generate VBO
   glGenBuffers(1, &m_VBO);
@@ -252,4 +260,5 @@ void OpenGLWindow::update() {
   m_camera.dolly(m_dollySpeed * deltaTime);
   m_camera.truck(m_truckSpeed * deltaTime);
   m_camera.pan(m_panSpeed * deltaTime);
+  m_camera.vertical_pan(m_vertPanSpeed * deltaTime);
 }
