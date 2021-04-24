@@ -43,8 +43,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   // Shaders
   const std::vector<const char*> m_shaderNames{
-      "cubereflect", "cuberefract", "normalmapping", "texture", "blinnphong",
-      "phong",       "gouraud",     "normal",        "depth"};
+      "texture"};
   std::vector<GLuint> m_programs;
   int m_currentProgramIndex{};
 
