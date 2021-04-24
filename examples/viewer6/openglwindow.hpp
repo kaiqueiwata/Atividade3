@@ -6,6 +6,7 @@
 #include "abcg.hpp"
 #include "model.hpp"
 #include "trackball.hpp"
+#include "camera.hpp"
 
 class OpenGLWindow : public abcg::OpenGLWindow {
  protected:
@@ -23,13 +24,17 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   Model m_model;
   int m_trianglesToDraw{};
 
+  Camera m_camera;
+  float m_dollySpeed{0.0f};
+  float m_truckSpeed{0.0f};
+  float m_panSpeed{0.0f};
+  float m_vertPanSpeed{0.0f};
+
   TrackBall m_trackBallModel;
   TrackBall m_trackBallLight;
   float m_zoom{};
 
-  glm::vec3 m_eyePosition{};
   glm::mat4 m_modelMatrix{1.0f};
-  glm::mat4 m_viewMatrix{1.0f};
   glm::mat4 m_projMatrix{1.0f};
 
   // Shaders
