@@ -16,6 +16,9 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   void paintUI() override;
   void resizeGL(int width, int height) override;
   void terminateGL() override;
+  float m_jumpSpeed{0.0f};
+  bool isJumping;
+
 
  private:
   int m_viewportWidth{};

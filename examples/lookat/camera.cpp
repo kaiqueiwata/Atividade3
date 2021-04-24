@@ -65,9 +65,12 @@ void Camera::pan(float speed) {
 void Camera::vertical_pan(float speed) {
   glm::mat4 transform{glm::mat4(1.0f)};
 
+  glm::vec3 m_rot = m_eye;
+  m_rot.y = 0; 
+
   // Rotate camera around its local y axis
   transform = glm::translate(transform, m_eye);
-  transform = glm::rotate(transform, -speed, m_side);
+  transform = glm::rotate(transform, -speed, m_rot);
   transform = glm::translate(transform, -m_eye);
 
   m_at = transform * glm::vec4(m_at, 1.0f);

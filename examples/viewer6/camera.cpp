@@ -61,3 +61,11 @@ void Camera::vertical_pan(float speed) {
 
   computeViewMatrix();
 }
+
+void Camera::jump(float speed) {
+  // Move a camera e o olho para cima e para baixo dependendo do sinal da velocidade
+  m_at += m_up * speed;
+  m_eye += m_up * speed;
+
+  computeViewMatrix();
+}

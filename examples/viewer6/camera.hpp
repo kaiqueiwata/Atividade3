@@ -15,6 +15,7 @@ class Camera {
   void truck(float speed);
   void pan(float speed);
   void vertical_pan(float speed);
+  void jump(float speed);
 
  private:
   friend OpenGLWindow;
