@@ -87,6 +87,13 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
     if (event.key.keysym.sym == SDLK_d && m_truckSpeed > 0) 
       m_truckSpeed = 0.0f;
   }
+
+  if(event.key.keysym.sym == SDLK_SPACE){
+    if(!isJumping){
+      isJumping = true;
+      m_jumpSpeed = 1.0f;
+    }
+  }
 }
 
 void OpenGLWindow::initializeGL() {
@@ -108,6 +115,8 @@ void OpenGLWindow::initializeGL() {
 
   // Initial trackball spin
   m_trackBallModel.setAxis(glm::normalize(glm::vec3(1, 1, 1)));
+
+  //Aqui esta definindo a posicao inicial do tronco 
   m_modelMatrix = glm::translate(m_modelMatrix, glm::vec3(0, 0, -1));
 
   initializeSkybox();
@@ -521,15 +530,54 @@ void OpenGLWindow::terminateSkybox() {
   glDeleteVertexArrays(1, &m_skyVAO);
 }
 
+void OpenGLWindow::translateModel(float speed){
+  
+  glm::vec3 m_forward{glm::vec3(0.0f, 0.0f, 1.0f)};
+  m_forward = m_forward * speed;
+
+  m_modelMatrix = glm::translate(m_modelMatrix, m_forward);
+}
+
+//Leva o modelo de volta a posicao inicial
+void OpenGLWindow::resetModelPosition(){
+  //o vetor para a posicao inicial = vetor unitario * o tempo decorrido
+  glm::vec3 initialPositionVec = glm::vec3(0,0,-1) * elapsedTime;
+
+  m_modelMatrix = glm::translate(m_modelMatrix, initialPositionVec);
+
+  //zera o tempo decorrido para calcular o proximo loop
+  elapsedTime = 0.0f;
+}
+
 void OpenGLWindow::update() {
   
- float deltaTime{static_cast<float>(getDeltaTime())};
+  float deltaTime{static_cast<float>(getDeltaTime())};
 
-  m_modelMatrix = m_trackBallModel.getTranslation(m_modelMatrix, m_LogSpeed * deltaTime);
+  elapsedTime += deltaTime;
+  
+  if(timer >= elapsedTime){
+    translateModel(m_LogSpeed * deltaTime);
+  }
+  else{
+    resetModelPosition();
+  }
 
   // Update LookAt camera
   m_camera.dolly(m_dollySpeed * deltaTime);
   m_camera.truck(m_truckSpeed * deltaTime);
   m_camera.pan(m_panSpeed * deltaTime);
   m_camera.vertical_pan(m_vertPanSpeed * deltaTime);
+
+  if(isJumping){
+    m_camera.jump(m_jumpSpeed * deltaTime);  
+     
+    if(m_camera.m_at.y > 0.5f){
+      m_jumpSpeed -= deltaTime;
+    }
+    else {
+      isJumping = false;
+      m_jumpSpeed = 0;
+      m_camera.m_at.y = 0.5f;
+    }
+  }
 }

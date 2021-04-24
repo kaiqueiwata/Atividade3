@@ -34,6 +34,12 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   float m_vertPanSpeed{0.0f};
   float m_LogSpeed{1.0f};
 
+  //Tempo necessario para resetar a posicao da tronco
+  float timer= 3.5f;
+
+  //tempo decorrido desde o reset
+  float elapsedTime = 0.0f;
+
   TrackBall m_trackBallModel;
   TrackBall m_trackBallLight;
   float m_zoom{};
@@ -95,6 +101,8 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   void terminateSkybox();
   void loadModel(std::string_view path);
   void update();
+  void translateModel(float speed);
+  void resetModelPosition();
 };
 
 #endif
