@@ -29,6 +29,7 @@ void TrackBall::mouseMove(const glm::ivec2 &position) {
   m_velocity = glm::clamp(m_velocity, 0.0f, m_maxVelocity);
 
   // Concatenate the rotation: R_old = R_new * R_old
+  
   m_rotation = glm::rotate(glm::mat4(1.0f), angle, m_axis) * m_rotation;
 
   m_lastPosition = currentPosition;

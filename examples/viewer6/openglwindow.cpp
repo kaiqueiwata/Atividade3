@@ -14,22 +14,19 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
   if (event.type == SDL_MOUSEMOTION) {
     m_trackBallModel.mouseMove(mousePosition);
     m_trackBallLight.mouseMove(mousePosition);
+    m_trackBallLight.mousePress(mousePosition);
   }
   if (event.type == SDL_MOUSEBUTTONDOWN) {
     if (event.button.button == SDL_BUTTON_LEFT) {
       m_trackBallModel.mousePress(mousePosition);
     }
-    if (event.button.button == SDL_BUTTON_RIGHT) {
-      m_trackBallLight.mousePress(mousePosition);
-    }
+ 
   }
   if (event.type == SDL_MOUSEBUTTONUP) {
     if (event.button.button == SDL_BUTTON_LEFT) {
       m_trackBallModel.mouseRelease(mousePosition);
     }
-    if (event.button.button == SDL_BUTTON_RIGHT) {
-      m_trackBallLight.mouseRelease(mousePosition);
-    }
+  
   }
   if (event.type == SDL_MOUSEWHEEL) {
     m_zoom += (event.wheel.y > 0 ? 1.0f : -1.0f) / 5.0f;
