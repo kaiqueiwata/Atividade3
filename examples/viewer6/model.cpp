@@ -150,8 +150,8 @@ void Model::loadCubeTexture(const std::string& path) {
 
   glDeleteTextures(1, &m_cubeTexture);
   m_cubeTexture = abcg::opengl::loadCubemap(
-      {path + "right.jpg", path + "left.jpg", path + "top.jpg",
-       path + "bottom.jpg", path + "front.jpg", path + "back.jpg"});
+      {path + "px.png", path + "nx.png", path + "py.png",
+       path + "ny.png", path + "pz.png", path + "nz.png"});
 }
 
 void Model::loadDiffuseTexture(std::string_view path) {
