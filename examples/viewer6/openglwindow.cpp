@@ -35,6 +35,57 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
     m_zoom += (event.wheel.y > 0 ? 1.0f : -1.0f) / 5.0f;
     m_zoom = glm::clamp(m_zoom, -1.5f, 1.0f);
   }
+  if (event.type == SDL_KEYDOWN) {
+    // Ir pra frente e pra tras
+    if (event.key.keysym.sym == SDLK_w)
+      m_dollySpeed = 1.0f;
+    if (event.key.keysym.sym == SDLK_s)
+      m_dollySpeed = -1.0f;
+
+    // Olhar pra direita e pra esquerda
+    if (event.key.keysym.sym == SDLK_LEFT)
+      m_panSpeed = -1.0f;
+    if (event.key.keysym.sym == SDLK_RIGHT)
+      m_panSpeed = 1.0f;
+      
+    //Olhar pra cima e pra baixo
+    if (event.key.keysym.sym == SDLK_UP)
+      m_vertPanSpeed = -1.0f;
+    if (event.key.keysym.sym == SDLK_DOWN)
+      m_vertPanSpeed = 1.0f;
+
+    //Andar de um lado para outro
+    if (event.key.keysym.sym == SDLK_a) 
+      m_truckSpeed = -1.0f;
+    if (event.key.keysym.sym == SDLK_d) 
+      m_truckSpeed = 1.0f;
+
+  }
+  if (event.type == SDL_KEYUP) {
+    // Parar movimento de ir pra frente e pra tras
+    if (event.key.keysym.sym == SDLK_w && m_dollySpeed > 0)
+      m_dollySpeed = 0.0f;
+    if ( event.key.keysym.sym == SDLK_s && m_dollySpeed < 0)
+      m_dollySpeed = 0.0f;
+
+    // Parar de virar a camera de lado
+    if (event.key.keysym.sym == SDLK_LEFT && m_panSpeed < 0)
+      m_panSpeed = 0.0f;
+    if (event.key.keysym.sym == SDLK_RIGHT && m_panSpeed > 0)
+      m_panSpeed = 0.0f;
+    
+    //Parar de virar a camera verticalmente
+    if (event.key.keysym.sym == SDLK_UP && m_vertPanSpeed < 0)
+      m_vertPanSpeed = 0.0f;
+    if (event.key.keysym.sym == SDLK_DOWN && m_vertPanSpeed > 0)
+      m_vertPanSpeed = 0.0f;
+    
+    //Parar de moviementar para os lados
+    if (event.key.keysym.sym == SDLK_a && m_truckSpeed < 0) 
+      m_truckSpeed = 0.0f;
+    if (event.key.keysym.sym == SDLK_d && m_truckSpeed > 0) 
+      m_truckSpeed = 0.0f;
+  }
 }
 
 void OpenGLWindow::initializeGL() {
@@ -135,8 +186,8 @@ void OpenGLWindow::paintGL() {
   GLint texMatrixLoc{glGetUniformLocation(program, "texMatrix")};
 
   // Set uniform variables used by every scene object
-  glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, &m_viewMatrix[0][0]);
-  glUniformMatrix4fv(projMatrixLoc, 1, GL_FALSE, &m_projMatrix[0][0]);
+   glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, &m_camera.m_viewMatrix[0][0]);
+  glUniformMatrix4fv(projMatrixLoc, 1, GL_FALSE, &m_camera.m_projMatrix[0][0]);
   glUniform1i(diffuseTexLoc, 0);
   glUniform1i(normalTexLoc, 1);
   glUniform1i(cubeTexLoc, 2);
@@ -154,7 +205,7 @@ void OpenGLWindow::paintGL() {
   // Set uniform variables of the current object
   glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &m_modelMatrix[0][0]);
 
-  auto modelViewMatrix{glm::mat3(m_viewMatrix * m_modelMatrix)};
+  auto modelViewMatrix{glm::mat3(m_camera.m_viewMatrix * m_modelMatrix)};
   glm::mat3 normalMatrix{glm::inverseTranspose(modelViewMatrix)};
   glUniformMatrix3fv(normalMatrixLoc, 1, GL_FALSE, &normalMatrix[0][0]);
 
@@ -452,6 +503,8 @@ void OpenGLWindow::resizeGL(int width, int height) {
 
   m_trackBallModel.resizeViewport(width, height);
   m_trackBallLight.resizeViewport(width, height);
+  
+  m_camera.computeProjectionMatrix(width, height);
 }
 
 void OpenGLWindow::terminateGL() {
@@ -470,7 +523,10 @@ void OpenGLWindow::terminateSkybox() {
 void OpenGLWindow::update() {
   m_modelMatrix = m_trackBallModel.getRotation();
 
-  m_eyePosition = glm::vec3(0.0f, 0.0f, 2.0f + m_zoom);
-  m_viewMatrix = glm::lookAt(m_eyePosition, glm::vec3(0.0f, 0.0f, 0.0f),
-                             glm::vec3(0.0f, 1.0f, 0.0f));
+ float deltaTime{static_cast<float>(getDeltaTime())};
+  // Update LookAt camera
+  m_camera.dolly(m_dollySpeed * deltaTime);
+  m_camera.truck(m_truckSpeed * deltaTime);
+  m_camera.pan(m_panSpeed * deltaTime);
+  m_camera.vertical_pan(m_vertPanSpeed * deltaTime);
 }
