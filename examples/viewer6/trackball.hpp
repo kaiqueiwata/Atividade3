@@ -15,6 +15,7 @@ class TrackBall {
 
   void setAxis(glm::vec3 axis) { m_axis = axis; }
   void setVelocity(float velocity) { m_velocity = velocity; }
+  float elapsedTime = 0.0f;
 
  private:
   const float m_maxVelocity{glm::radians(720.0f / 1000.0f)};
@@ -23,7 +24,7 @@ class TrackBall {
   glm::vec3 m_position{-1.0f};
   float m_velocity{};
   glm::mat4 m_rotation{1.0f};
-
+  
   glm::vec3 m_lastPosition{};
   abcg::ElapsedTimer m_lastTime{};
   bool m_mouseTracking{};
