@@ -36,6 +36,19 @@ void Camera::truck(float speed) {
   computeViewMatrix();
 }
 
+void Camera::jump(float speed) {
+  // Compute forward vector (view direction)
+  //glm::vec3 forward = glm::normalize(m_at - m_eye);
+  // Compute vector to the left
+  //glm::vec3 left = glm::cross(m_up, forward);
+
+  // Move eye and center to the left (speed < 0) or to the right (speed > 0)
+  m_at += m_up * speed;
+  m_eye += m_up * speed;
+
+  computeViewMatrix();
+}
+
 void Camera::pan(float speed) {
   glm::mat4 transform{glm::mat4(1.0f)};
 

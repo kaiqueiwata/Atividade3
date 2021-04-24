@@ -35,6 +35,9 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   float m_truckSpeed{0.0f};
   float m_panSpeed{0.0f};
   float m_vertPanSpeed{0.0f};
+  float m_jumpSpeed{0.0f};
+
+  bool isJumping;
 
   std::vector<Vertex> m_vertices;
   std::vector<GLuint> m_indices;
