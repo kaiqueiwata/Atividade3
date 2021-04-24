@@ -11,11 +11,11 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
   glm::ivec2 mousePosition;
   SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
 
-  if (event.type == SDL_MOUSEMOTION) {
-    m_trackBallModel.mouseMove(mousePosition);
-    m_trackBallLight.mouseMove(mousePosition);
-    m_trackBallLight.mousePress(mousePosition);
-  }
+  // if (event.type == SDL_MOUSEMOTION) {
+  //   m_trackBallModel.mouseMove(mousePosition);
+  //   m_trackBallLight.mouseMove(mousePosition);
+  //   m_trackBallLight.mousePress(mousePosition);
+  // }
   if (event.type == SDL_MOUSEBUTTONDOWN) {
     if (event.button.button == SDL_BUTTON_LEFT) {
       m_trackBallModel.mousePress(mousePosition);
@@ -102,14 +102,14 @@ void OpenGLWindow::initializeGL() {
   }
 
   // Load default model
-  loadModel(getAssetsPath() + "bunny.obj");
+  loadModel(getAssetsPath() + "/Tree_Log/one_log.obj");
 
   // Load cubemap
   m_model.loadCubeTexture(getAssetsPath() + "maps/cube/");
 
   // Initial trackball spin
   m_trackBallModel.setAxis(glm::normalize(glm::vec3(1, 1, 1)));
-  m_trackBallModel.setVelocity(0.0001f);
+  m_modelMatrix = glm::translate(m_modelMatrix, glm::vec3(0, 0, -1));
 
   initializeSkybox();
 }
@@ -523,9 +523,11 @@ void OpenGLWindow::terminateSkybox() {
 }
 
 void OpenGLWindow::update() {
-  m_modelMatrix = m_trackBallModel.getRotation();
-
+  
  float deltaTime{static_cast<float>(getDeltaTime())};
+
+  m_modelMatrix = m_trackBallModel.getTranslation(m_modelMatrix, m_LogSpeed * deltaTime);
+
   // Update LookAt camera
   m_camera.dolly(m_dollySpeed * deltaTime);
   m_camera.truck(m_truckSpeed * deltaTime);

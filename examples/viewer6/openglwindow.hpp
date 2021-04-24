@@ -32,6 +32,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   float m_truckSpeed{0.0f};
   float m_panSpeed{0.0f};
   float m_vertPanSpeed{0.0f};
+  float m_LogSpeed{1.0f};
 
   TrackBall m_trackBallModel;
   TrackBall m_trackBallLight;

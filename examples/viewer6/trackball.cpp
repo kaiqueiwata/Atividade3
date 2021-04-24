@@ -66,6 +66,15 @@ glm::mat4 TrackBall::getRotation() {
   return glm::rotate(glm::mat4(1.0f), angle, m_axis) * m_rotation;
 }
 
+glm::mat4 TrackBall::getTranslation(glm::mat4 m_position, float speed) {
+  //if (m_mouseTracking) return m_rotation;
+  
+  glm::vec3 m_forward{glm::vec3(0.0f, 0.0f, 1.0f)};
+  m_forward = m_forward * speed;
+
+  return glm::translate(m_position, m_forward);
+}
+
 glm::vec3 TrackBall::project(const glm::vec2 &position) const {
   // Convert from window coordinates to NDC
   auto v{glm::vec3(2.0f * position.x / m_viewportWidth - 1.0f,

@@ -11,6 +11,7 @@ class TrackBall {
   void resizeViewport(int width, int height);
 
   [[nodiscard]] glm::mat4 getRotation();
+  [[nodiscard]] glm::mat4 getTranslation(glm::mat4 mat, float speed);
 
   void setAxis(glm::vec3 axis) { m_axis = axis; }
   void setVelocity(float velocity) { m_velocity = velocity; }
@@ -19,6 +20,7 @@ class TrackBall {
   const float m_maxVelocity{glm::radians(720.0f / 1000.0f)};
 
   glm::vec3 m_axis{1.0f};
+  glm::vec3 m_position{-1.0f};
   float m_velocity{};
   glm::mat4 m_rotation{1.0f};
 
