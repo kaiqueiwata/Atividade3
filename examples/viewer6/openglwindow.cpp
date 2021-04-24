@@ -20,13 +20,17 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
     if (event.button.button == SDL_BUTTON_LEFT) {
       m_trackBallModel.mousePress(mousePosition);
     }
- 
+    if (event.button.button == SDL_BUTTON_RIGHT) {
+      m_trackBallLight.mousePress(mousePosition);
+    }
   }
   if (event.type == SDL_MOUSEBUTTONUP) {
     if (event.button.button == SDL_BUTTON_LEFT) {
       m_trackBallModel.mouseRelease(mousePosition);
     }
-  
+    if (event.button.button == SDL_BUTTON_RIGHT) {
+      m_trackBallLight.mouseRelease(mousePosition);
+    }
   }
   if (event.type == SDL_MOUSEWHEEL) {
     m_zoom += (event.wheel.y > 0 ? 1.0f : -1.0f) / 5.0f;
@@ -82,11 +86,6 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
       m_truckSpeed = 0.0f;
     if (event.key.keysym.sym == SDLK_d && m_truckSpeed > 0) 
       m_truckSpeed = 0.0f;
-  }
-
-  if(event.key.keysym.sym == SDLK_SPACE){
-    isJumping = true;
-    m_jumpSpeed = 1.0f;
   }
 }
 
@@ -533,17 +532,4 @@ void OpenGLWindow::update() {
   m_camera.truck(m_truckSpeed * deltaTime);
   m_camera.pan(m_panSpeed * deltaTime);
   m_camera.vertical_pan(m_vertPanSpeed * deltaTime);
-
-  if(isJumping){
-    m_camera.jump(m_jumpSpeed * deltaTime);  
-    //printf("%.2lf", m_jumpSpeed);
-    if(m_camera.m_at.y > 0.5f){
-      m_jumpSpeed -= deltaTime;
-    }
-    else {
-      isJumping = false;
-      m_jumpSpeed = 0;
-      m_camera.m_at.y = 0.5f;
-    }
-  }
 }
