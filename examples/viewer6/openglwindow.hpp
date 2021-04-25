@@ -2,6 +2,7 @@
 #define OPENGLWINDOW_HPP_
 
 #include <string_view>
+#include <imgui.h>
 
 #include "abcg.hpp"
 #include "model.hpp"
@@ -34,6 +35,10 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   float m_vertPanSpeed{0.0f};
   float m_LogSpeed{1.0f};
 
+  //variavel que vai indicar se houver colisao entre o personagem e o tronco
+  bool houveColisao;
+  //pontuacao: cada arvore saltada ganha um ponto
+  int pontos;
   //Tempo necessario para resetar a posicao da tronco
   float timer= 3.5f;
 
@@ -46,6 +51,10 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   glm::mat4 m_modelMatrix{1.0f};
   glm::mat4 m_projMatrix{1.0f};
+
+  ImFont* m_font_game_over{};
+
+  float restartTimer = 3.0f;
 
   // Shaders
   const std::vector<const char*> m_shaderNames{
@@ -103,6 +112,9 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   void update();
   void translateModel(float speed);
   void resetModelPosition();
+  void checkCollisions();
+  void restart();
+  float getZPos(glm::mat4 matrix);
 };
 
 #endif
