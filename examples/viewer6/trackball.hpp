@@ -20,10 +20,12 @@ class TrackBall {
  private:
   const float m_maxVelocity{glm::radians(720.0f / 1000.0f)};
 
-  glm::vec3 m_axis{1.0f};
+  glm::vec3 m_axis{0.0f, 1.0f, 0.0f};
   glm::vec3 m_position{-1.0f};
   float m_velocity{};
-  glm::mat4 m_rotation{1.0f};
+  glm::mat4 m_rotation{glm::rotate(glm::mat4(1.0f), 270.0f, m_axis)};
+ 
+  
   
   glm::vec3 m_lastPosition{};
   abcg::ElapsedTimer m_lastTime{};
