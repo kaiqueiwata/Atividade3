@@ -542,7 +542,6 @@ void OpenGLWindow::translateModel(float speed) {
 
   // Vetor unitario da direcao X velocidade X fator de aceleracao
   m_forward = m_forward * speed * m_logSpeedFactor;
-  printf("x: %.3f | y: %.3f | z: %.3f\n", m_modelMatrix[3][0],m_modelMatrix[3][1],m_modelMatrix[3][2]);
   m_modelMatrix = glm::translate(m_modelMatrix, m_forward);
 }
 
