@@ -8,78 +8,8 @@
 #include "imfilebrowser.h"
 
 void OpenGLWindow::handleEvent(SDL_Event& event) {
-  glm::ivec2 mousePosition;
-  SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
-
-  if (event.type == SDL_MOUSEBUTTONDOWN) {
-    if (event.button.button == SDL_BUTTON_LEFT) {
-      m_trackBallModel.mousePress(mousePosition);
-    }
-    if (event.button.button == SDL_BUTTON_RIGHT) {
-      m_trackBallLight.mousePress(mousePosition);
-    }
-  }
-  if (event.type == SDL_MOUSEBUTTONUP) {
-    if (event.button.button == SDL_BUTTON_LEFT) {
-      m_trackBallModel.mouseRelease(mousePosition);
-    }
-    if (event.button.button == SDL_BUTTON_RIGHT) {
-      m_trackBallLight.mouseRelease(mousePosition);
-    }
-  }
-  if (event.type == SDL_MOUSEWHEEL) {
-    m_zoom += (event.wheel.y > 0 ? 1.0f : -1.0f) / 5.0f;
-    m_zoom = glm::clamp(m_zoom, -1.5f, 1.0f);
-  }
-  if (event.type == SDL_KEYDOWN) {
-    // Ir pra frente e pra tras
-    if (event.key.keysym.sym == SDLK_w)
-      m_dollySpeed = 1.0f;
-    if (event.key.keysym.sym == SDLK_s)
-      m_dollySpeed = -1.0f;
-
-    // Olhar pra direita e pra esquerda
-    if (event.key.keysym.sym == SDLK_LEFT)
-      m_panSpeed = -1.0f;
-    if (event.key.keysym.sym == SDLK_RIGHT)
-      m_panSpeed = 1.0f;  
-
-    //Andar de um lado para outro
-    if (event.key.keysym.sym == SDLK_a) 
-      m_truckSpeed = -1.0f;
-    if (event.key.keysym.sym == SDLK_d) 
-      m_truckSpeed = 1.0f;
-
-    if(event.key.keysym.sym == SDLK_SPACE){
-      printf("Capturou a tecla (DOWN)\n");
-      // if(!isJumping){
-      //   isJumping = true;
-      //   m_jumpSpeed = 2.0f;
-      // }
-    }
-  }
-  
   if (event.type == SDL_KEYUP) {
-    // Parar movimento de ir pra frente e pra tras
-    if (event.key.keysym.sym == SDLK_w && m_dollySpeed > 0)
-      m_dollySpeed = 0.0f;
-    if ( event.key.keysym.sym == SDLK_s && m_dollySpeed < 0)
-      m_dollySpeed = 0.0f;
-
-    // Parar de virar a camera de lado
-    if (event.key.keysym.sym == SDLK_LEFT && m_panSpeed < 0)
-      m_panSpeed = 0.0f;
-    if (event.key.keysym.sym == SDLK_RIGHT && m_panSpeed > 0)
-      m_panSpeed = 0.0f;
-    
-    //Parar de moviementar para os lados
-    if (event.key.keysym.sym == SDLK_a && m_truckSpeed < 0) 
-      m_truckSpeed = 0.0f;
-    if (event.key.keysym.sym == SDLK_d && m_truckSpeed > 0) 
-      m_truckSpeed = 0.0f;
-
     if(event.key.keysym.sym == SDLK_SPACE){
-      printf("Capturou a tecla (UP)\n");
       if(!isJumping){
         isJumping = true;
         m_jumpSpeed = 2.0f;
@@ -136,7 +66,7 @@ void OpenGLWindow::initializeGL() {
 
   //Aqui esta definindo a posicao inicial do tronco 
   m_modelMatrix = glm::translate(m_modelMatrix, glm::vec3(0, 0, -1));
-
+  m_camera.dolly(0.0f);
   initializeSkybox();
 }
 
@@ -611,13 +541,14 @@ void OpenGLWindow::translateModel(float speed){
 
   //Vetor unitario da direcao X velocidade X fator de aceleracao
   m_forward = m_forward * speed * m_logSpeedFactor;
-
+  printf("x: %.3f | y: %.3f | z: %.3f\n", m_modelMatrix[3][0],m_modelMatrix[3][1],m_modelMatrix[3][2]);
   m_modelMatrix = glm::translate(m_modelMatrix, m_forward);
 }
 
 //Leva o modelo de volta a posicao inicial
 void OpenGLWindow::resetModelPosition(){
-  m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -1 * m_logSpeedFactor));
+  printf("RESETOU\n");
+  m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -2.5f));
 }
 
 void OpenGLWindow::update() {
@@ -627,22 +558,12 @@ void OpenGLWindow::update() {
   elapsedTime += deltaTime;
   
   if(isJumping){
-    if(!avisoPulandoDado){
-      printf("esta pulando\n");
-      avisoPulandoDado = true;
-      avisoEncerrouPuloDado = false;
-    }
     m_camera.jump(m_jumpSpeed * deltaTime * m_jumpSpeedFactor);  
 
     if(m_camera.m_at.y > 0.49f){
       m_jumpSpeed -= 3 * deltaTime;
     }
     else {
-      if(!avisoEncerrouPuloDado){
-        printf("encerrou o pulo\n");
-        avisoEncerrouPuloDado = true;
-        avisoPulandoDado = false;
-      }
       isJumping = false;
       m_jumpSpeed = 0;
       m_camera.m_at.y = 0.5f;
@@ -680,9 +601,9 @@ void OpenGLWindow::update() {
   checkCollisions();
 
   //Update LookAt camera
-  m_camera.dolly(m_dollySpeed * deltaTime);
-  m_camera.truck(m_truckSpeed * deltaTime);
-  m_camera.pan(m_panSpeed * deltaTime);
+  // m_camera.dolly(m_dollySpeed * deltaTime);
+  // m_camera.truck(m_truckSpeed * deltaTime);
+  // m_camera.pan(m_panSpeed * deltaTime);
 
   if(houveColisao){
     restartTimer -= deltaTime;

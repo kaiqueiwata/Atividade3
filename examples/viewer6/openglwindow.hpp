@@ -52,9 +52,6 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   //pontuacao: cada arvore saltada ganha um ponto
   int pontos;
 
-  bool avisoPulandoDado = false;
-  bool avisoEncerrouPuloDado = false;
-
   TrackBall m_trackBallModel;
   TrackBall m_trackBallLight;
 
