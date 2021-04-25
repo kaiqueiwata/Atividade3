@@ -3,5 +3,5 @@
 #add_subdirectory(sierpinski)
 #add_subdirectory(coloredtriangles)
 #add_subdirectory(asteroids)
-add_subdirectory(viewer6)
+add_subdirectory(TheTreeLogChallenge)
 #add_subdirectory(lookat)
