@@ -289,7 +289,7 @@ void OpenGLWindow::paintUI() {
   // File browser for textures
   static ImGui::FileBrowser fileDialogDiffuseMap;
   fileDialogDiffuseMap.SetTitle("Load Diffuse Map");
-  fileDialogDiffuseMap.SetTypeFilters({".jpg", ".png"});
+  fileDialogDiffuseMap.SetTypeFilters({".jpg", ".png" });
   fileDialogDiffuseMap.SetWindowSize(m_viewportWidth * 0.8f,
                                      m_viewportHeight * 0.8f);
 

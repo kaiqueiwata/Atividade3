@@ -57,6 +57,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   TrackBall m_trackBallModel;
   TrackBall m_trackBallLight;
+
   float m_zoom{};
 
   glm::mat4 m_modelMatrix{1.0f};
@@ -93,7 +94,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   // Mapping mode
   // 0: triplanar; 1: cylindrical; 2: spherical; 3: from mesh
-  int m_mappingMode{};
+  int m_mappingMode{3};
 
   // Light and material properties
   glm::vec4 m_lightDir{-1.0f, -1.0f, -1.0f, 0.0f};
