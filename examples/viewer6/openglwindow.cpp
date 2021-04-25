@@ -42,13 +42,7 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
     if (event.key.keysym.sym == SDLK_LEFT)
       m_panSpeed = -1.0f;
     if (event.key.keysym.sym == SDLK_RIGHT)
-      m_panSpeed = 1.0f;
-      
-    //Olhar pra cima e pra baixo
-    if (event.key.keysym.sym == SDLK_UP)
-      m_vertPanSpeed = -1.0f;
-    if (event.key.keysym.sym == SDLK_DOWN)
-      m_vertPanSpeed = 1.0f;
+      m_panSpeed = 1.0f;  
 
     //Andar de um lado para outro
     if (event.key.keysym.sym == SDLK_a) 
@@ -75,13 +69,7 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
     if (event.key.keysym.sym == SDLK_LEFT && m_panSpeed < 0)
       m_panSpeed = 0.0f;
     if (event.key.keysym.sym == SDLK_RIGHT && m_panSpeed > 0)
-      m_panSpeed = 0.0f;
-    
-    //Parar de virar a camera verticalmente
-    if (event.key.keysym.sym == SDLK_UP && m_vertPanSpeed < 0)
-      m_vertPanSpeed = 0.0f;
-    if (event.key.keysym.sym == SDLK_DOWN && m_vertPanSpeed > 0)
-      m_vertPanSpeed = 0.0f;
+      m_panSpeed = 0.0f;;
     
     //Parar de moviementar para os lados
     if (event.key.keysym.sym == SDLK_a && m_truckSpeed < 0) 
@@ -107,8 +95,14 @@ void OpenGLWindow::initializeGL() {
   houveColisao = false;
   pontos = 0; 
 
-  auto filenameAquire{getAssetsPath() + "AquireBold-8Ma60.otf"};
-  m_font_game_over = io.Fonts->AddFontFromFileTTF(filenameAquire.c_str(), 45.0f);
+  auto ttf_gameover{getAssetsPath() + "fonts/HardsignLayered-eZ1MB.ttf"};
+  m_font_game_over = io.Fonts->AddFontFromFileTTF(ttf_gameover.c_str(), 45.0f);
+  if (m_font_game_over == nullptr) {
+    throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
+  }
+
+  auto ttf_message{getAssetsPath() + "fonts/PlayfairDisplaySemibold-lg9nd.ttf"};
+  m_font_message = io.Fonts->AddFontFromFileTTF(ttf_message.c_str(), 25.0f);
   if (m_font_game_over == nullptr) {
     throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
   }
@@ -137,7 +131,7 @@ void OpenGLWindow::initializeGL() {
 
 void OpenGLWindow::initializeSkybox() {
   // Create skybox program
-  auto path{getAssetsPath() + "shaders/" + m_skyShaderName};
+  auto path{getAssetsPath() + "shaders/" + m_skyShaderName};  
   m_skyProgram = createProgramFromFile(path + ".vert", path + ".frag");
 
   // Generate VBO
@@ -335,23 +329,50 @@ void OpenGLWindow::paintUI() {
       if (loadDiffMap) fileDialogDiffuseMap.Open();
       if (loadNormalMap) fileDialogNormalMap.Open();
     }
+
+  // Aviso de gameover
   if(houveColisao) {
+    
+    // //Titulo do jogo
+    // {
+    //   auto size{ImVec2(340, 180)};
+    //   auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
+    //                       (m_viewportHeight - size.y) / 2.0f)};
+    // }
 
-      auto size{ImVec2(340, 180)};
-      auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
-                           (m_viewportHeight - size.y) / 2.0f)};
+    auto size{ImVec2(340, 180)};
+    auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
+                          (m_viewportHeight - size.y) / 2.0f)};
 
-      ImGui::SetNextWindowPos(position);
-      ImGui::SetNextWindowSize(size);
-      ImGui::Begin(" ", nullptr, flags);
-      ImGui::PushFont(m_font_game_over);
-      
-      ImGui::Text("Fim de Jogo!");
-      ImGui::Text("   %d pts", pontos);
+    ImGui::SetNextWindowPos(position);
+    ImGui::SetNextWindowSize(size);
+    ImGui::Begin(" ", nullptr, flags);
+    ImGui::PushFont(m_font_game_over);
 
-      ImGui::PopFont();
-      ImGui::End();
-    }
+    ImGui::Text("Fim de Jogo!");
+    ImGui::Text("   %d pts", pontos);
+
+    ImGui::PopFont();
+    ImGui::End();
+  }
+
+  //A cada cinco pontos acumulados ele exibe a mensagem de que esta acelerando
+  if(acelerar)
+  {
+    auto size{ImVec2(340, 180)};
+    auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
+                          (m_viewportHeight - size.y - 20))};
+
+    ImGui::SetNextWindowPos(position);
+    ImGui::SetNextWindowSize(size); 
+    ImGui::Begin(" ", nullptr, flags);
+    ImGui::PushFont(m_font_message);
+
+    ImGui::Text("%d pontos!\nAcelerando 20%%", pontos);
+
+    ImGui::PopFont();
+    ImGui::End();
+  }
     // Slider will be stretched horizontally
     ImGui::PushItemWidth(widgetSize.x - 16);
     ImGui::SliderInt("", &m_trianglesToDraw, 0, m_model.getNumTriangles(),
@@ -562,16 +583,18 @@ void OpenGLWindow::terminateSkybox() {
 void OpenGLWindow::translateModel(float speed){
   
   glm::vec3 m_forward{glm::vec3(0.0f, 0.0f, 1.0f)};
-  m_forward = m_forward * speed;
+
+  //Vetor unitario da direcao X velocidade X fator de aceleracao
+  m_forward = m_forward * speed * m_logSpeedFactor;
+
   m_modelMatrix = glm::translate(m_modelMatrix, m_forward);
 
-  // //glm::vec3 direction = - m_forward * (timer - elapsedTime);
+  //glm::vec3 direction = - m_forward * (timer - elapsedTime);
   // glm::mat4 transform{glm::mat4(1.0f)};
-  
-  // glm::mat4 teste4 = m_modelMatrix;
-  // glm::vec3 direction = glm::vec3(teste4[3][0], teste4[3][1], teste4[3][2]);
+  // glm::vec3 direction = glm::vec3(m_modelMatrix[3][0], m_modelMatrix[3][1], m_modelMatrix[3][2]);
+
   // transform = glm::translate(transform, direction);
-  // transform = glm::rotate(transform, speed, glm::vec3(1,0,0));
+  // transform = glm::rotate(transform, 3 * speed, glm::vec3(1,0,0));
   // transform = glm::translate(transform, -direction);
 
   // m_modelMatrix = transform * m_modelMatrix;
@@ -599,13 +622,27 @@ void OpenGLWindow::update() {
     elapsedTime = 0.0f;
   }
 
+  if(pontos > 0 && pontos % 5 == 0 && !acelerar){
+    //incrementa a velocidade em 20% a cada 5 troncos pulados
+    m_logSpeedFactor += 0.2f;
+    acelerar = true;
+  }
+
+  if(acelerar){
+    elapsedMsgTimer += deltaTime;
+
+    if(elapsedMsgTimer >= displayMsgTimer){
+      acelerar = false;
+      elapsedMsgTimer = 0.0f;
+    }
+  }
+
   checkCollisions();
 
   // Update LookAt camera
   m_camera.dolly(m_dollySpeed * deltaTime);
   m_camera.truck(m_truckSpeed * deltaTime);
   m_camera.pan(m_panSpeed * deltaTime);
-  m_camera.vertical_pan(m_vertPanSpeed * deltaTime);
 
   if(isJumping){
     m_camera.jump(m_jumpSpeed * deltaTime);  
@@ -632,9 +669,6 @@ void OpenGLWindow::checkCollisions() {
   float zModel =getZPos(m_modelMatrix);
   //houve colisao: o tronco da arvore esta proximo e o personagem nao esta pulando
   houveColisao = houveColisao || ((zModel >= +2.1f && zModel <= 2.5f) && !isJumping);
-  if(houveColisao){
-    printf("colidiu\n");
-  }
 }
 
 float OpenGLWindow::getZPos(glm::mat4 matrix){
@@ -642,9 +676,10 @@ float OpenGLWindow::getZPos(glm::mat4 matrix){
 }
 
 void OpenGLWindow::restart(){
-  printf("reiniciou\n");
   pontos = 0;
   houveColisao = false;
   resetModelPosition();
   restartTimer = 3.0f;
+  elapsedMsgTimer = 0.0f;
+  m_logSpeedFactor = 1.0f;
 }

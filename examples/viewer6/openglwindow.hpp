@@ -32,18 +32,19 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   float m_dollySpeed{0.0f};
   float m_truckSpeed{0.0f};
   float m_panSpeed{0.0f};
-  float m_vertPanSpeed{0.0f};
+
+  //velocidade base do Tronco
   float m_LogSpeed{1.0f};
+
+  //fator de velocidade incremental do tronco
+  float m_logSpeedFactor{1.2f};
+  //booleano para indicar quando se deve acelerar o jogo
+  bool acelerar;
 
   //variavel que vai indicar se houver colisao entre o personagem e o tronco
   bool houveColisao;
   //pontuacao: cada arvore saltada ganha um ponto
   int pontos;
-  //Tempo necessario para resetar a posicao da tronco
-  float timer= 3.5f;
-
-  //tempo decorrido desde o reset
-  float elapsedTime = 0.0f;
 
   TrackBall m_trackBallModel;
   TrackBall m_trackBallLight;
@@ -52,10 +53,26 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   glm::mat4 m_modelMatrix{1.0f};
   glm::mat4 m_projMatrix{1.0f};
 
+  //Fonte do game over
   ImFont* m_font_game_over{};
 
+  //Fonte de mensagem que sera exibida a cada 5 pontos 
+  ImFont* m_font_message{};
+
+
+  //TIMERS:
+  //Tempo necessario para resetar a posicao da tronco
+  float timer= 3.5f;
+  //tempo decorrido desde o reset
+  float elapsedTime = 0.0f;
+
+  //Tempo para mostrar o fim de jogo e a pontuacao final e entao reiniciar o jogo
   float restartTimer = 3.0f;
 
+  //timer para mostrar mensagens na tela
+  float displayMsgTimer = 1.0f;
+  //Tempo decorrido da mensagem
+  float elapsedMsgTimer = 0.0f;
   // Shaders
   const std::vector<const char*> m_shaderNames{
       "texture"};
