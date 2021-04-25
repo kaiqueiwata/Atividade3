@@ -269,7 +269,17 @@ void OpenGLWindow::paintUI() {
     ImGui::Text("The Tree Log Challenge!");
 
     ImGui::PopFont();
+    ImGui::PushFont(m_font_message);
+
+    ImGui::Text("Jump [SPACE]");
+
+    ImGui::PopFont();
     ImGui::End();
+
+    
+
+
+    
 
     if (acelerar) {
       auto size{ImVec2(340, 180)};
