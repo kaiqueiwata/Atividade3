@@ -36,6 +36,12 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   //velocidade base do Tronco
   float m_LogSpeed{1.0f};
 
+  //Fator de aceleracao do pulo
+  float m_jumpSpeedFactor{1.0f};
+
+  //usado para pular quando soltar o espaco 
+  bool jumpButtonPressed = false;
+
   //fator de velocidade incremental do tronco
   float m_logSpeedFactor{1.2f};
   //booleano para indicar quando se deve acelerar o jogo
@@ -46,6 +52,9 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   //pontuacao: cada arvore saltada ganha um ponto
   int pontos;
 
+  bool avisoPulandoDado = false;
+  bool avisoEncerrouPuloDado = false;
+
   TrackBall m_trackBallModel;
   TrackBall m_trackBallLight;
   float m_zoom{};
@@ -55,6 +64,9 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   //Fonte do game over
   ImFont* m_font_game_over{};
+
+  //Fonte do game over
+  ImFont* m_font_title{};
 
   //Fonte de mensagem que sera exibida a cada 5 pontos 
   ImFont* m_font_message{};
@@ -70,7 +82,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   float restartTimer = 3.0f;
 
   //timer para mostrar mensagens na tela
-  float displayMsgTimer = 1.0f;
+  float displayMsgTimer = 0.7f;
   //Tempo decorrido da mensagem
   float elapsedMsgTimer = 0.0f;
   // Shaders

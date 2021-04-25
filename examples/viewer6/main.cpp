@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
     auto window{std::make_unique<OpenGLWindow>()};
     window->setOpenGLSettings({.samples = 0});
     window->setWindowSettings(
-        {.width = 600, .height = 600, .title = "Model Viewer (version 6)"});
+        {.width = 900, .height = 600, .title = "Tree Log Challenge"});
 
     app.run(window);
   } catch (abcg::Exception &exception) {

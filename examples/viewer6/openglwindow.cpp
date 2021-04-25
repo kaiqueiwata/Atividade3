@@ -51,10 +51,11 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
       m_truckSpeed = 1.0f;
 
     if(event.key.keysym.sym == SDLK_SPACE){
-      if(!isJumping){
-        isJumping = true;
-        m_jumpSpeed = 2.0f;
-      }
+      printf("Capturou a tecla (DOWN)\n");
+      // if(!isJumping){
+      //   isJumping = true;
+      //   m_jumpSpeed = 2.0f;
+      // }
     }
   }
   
@@ -69,7 +70,7 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
     if (event.key.keysym.sym == SDLK_LEFT && m_panSpeed < 0)
       m_panSpeed = 0.0f;
     if (event.key.keysym.sym == SDLK_RIGHT && m_panSpeed > 0)
-      m_panSpeed = 0.0f;;
+      m_panSpeed = 0.0f;
     
     //Parar de moviementar para os lados
     if (event.key.keysym.sym == SDLK_a && m_truckSpeed < 0) 
@@ -78,6 +79,7 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
       m_truckSpeed = 0.0f;
 
     if(event.key.keysym.sym == SDLK_SPACE){
+      printf("Capturou a tecla (UP)\n");
       if(!isJumping){
         isJumping = true;
         m_jumpSpeed = 2.0f;
@@ -95,17 +97,26 @@ void OpenGLWindow::initializeGL() {
   houveColisao = false;
   pontos = 0; 
 
-  auto ttf_gameover{getAssetsPath() + "fonts/HardsignLayered-eZ1MB.ttf"};
-  m_font_game_over = io.Fonts->AddFontFromFileTTF(ttf_gameover.c_str(), 45.0f);
-  if (m_font_game_over == nullptr) {
-    throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
+
+  //configuracoes de fontes
+  {
+    //Fontes do titulo e mensagem de gameover/titulo
+    auto ttf_gameover{getAssetsPath() + "fonts/HardsignLayered-eZ1MB.ttf"};
+    auto ttf_message{getAssetsPath() + "fonts/PlayfairDisplaySemibold-lg9nd.ttf"};
+
+    //Titulo e GameOver sao as mesmas com tamanho diferente
+    m_font_game_over = io.Fonts->AddFontFromFileTTF(ttf_gameover.c_str(), 45.0f);
+    m_font_title = io.Fonts->AddFontFromFileTTF(ttf_gameover.c_str(), 65.0f);
+
+    //A fonte de mensagem, usada pra mostrar os pontos e avisar 
+    //e que o jogo ta acelerando, eh uma fonte mais simples
+    m_font_message = io.Fonts->AddFontFromFileTTF(ttf_message.c_str(), 25.0f);
+    
+    if (m_font_game_over == nullptr || m_font_message == nullptr || m_font_title == nullptr) {
+      throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
+    }
   }
 
-  auto ttf_message{getAssetsPath() + "fonts/PlayfairDisplaySemibold-lg9nd.ttf"};
-  m_font_message = io.Fonts->AddFontFromFileTTF(ttf_message.c_str(), 25.0f);
-  if (m_font_game_over == nullptr) {
-    throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
-  }
 
   // Create programs
   for (const auto& name : m_shaderNames) {
@@ -203,7 +214,7 @@ void OpenGLWindow::paintGL() {
   GLint texMatrixLoc{glGetUniformLocation(program, "texMatrix")};
 
   // Set uniform variables used by every scene object
-   glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, &m_camera.m_viewMatrix[0][0]);
+  glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, &m_camera.m_viewMatrix[0][0]);
   glUniformMatrix4fv(projMatrixLoc, 1, GL_FALSE, &m_camera.m_projMatrix[0][0]);
   glUniform1i(diffuseTexLoc, 0);
   glUniform1i(normalTexLoc, 1);
@@ -267,7 +278,6 @@ void OpenGLWindow::renderSkybox() {
 }
 
 void OpenGLWindow::paintUI() {
-  abcg::OpenGLWindow::paintUI();
 
   // File browser for models
   static ImGui::FileBrowser fileDialogModel;
@@ -306,6 +316,11 @@ void OpenGLWindow::paintUI() {
       widgetSize.y += 26;
     }
 
+    auto flagsDisplayText{ ImGuiWindowFlags_NoBackground 
+                        |   ImGuiWindowFlags_NoTitleBar | 
+                            ImGuiWindowFlags_NoInputs |
+                            ImGuiWindowFlags_NoDecoration};
+
     ImGui::SetNextWindowPos(ImVec2(m_viewportWidth - widgetSize.x - 5, 5));
     ImGui::SetNextWindowSize(widgetSize);
     auto flags{ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDecoration};
@@ -333,20 +348,30 @@ void OpenGLWindow::paintUI() {
   // Aviso de gameover
   if(houveColisao) {
     
-    // //Titulo do jogo
-    // {
-    //   auto size{ImVec2(340, 180)};
-    //   auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
-    //                       (m_viewportHeight - size.y) / 2.0f)};
-    // }
+    //Titulo do jogo
+    {
+      auto title_size{ImVec2(600, 200)};
+      auto title_position{ImVec2(0,0)};
 
-    auto size{ImVec2(340, 180)};
-    auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
-                          (m_viewportHeight - size.y) / 2.0f)};
+      ImGui::SetNextWindowPos(title_position);
+      ImGui::SetNextWindowSize(title_size);
+      ImGui::Begin(" ", nullptr,  flagsDisplayText);
+      ImGui::PushFont(m_font_title);
 
-    ImGui::SetNextWindowPos(position);
-    ImGui::SetNextWindowSize(size);
-    ImGui::Begin(" ", nullptr, flags);
+      ImGui::Text("The Tree Log Challenge!");
+
+      ImGui::PopFont();
+      ImGui::End();
+    }
+
+    auto game_over_size{ImVec2(400, 200)};
+    // auto game_over_position{ImVec2((m_viewportWidth - game_over_size.x) / 2.0f,
+    //                       (m_viewportHeight - game_over_size.y) / 2.0f)};
+    auto game_over_position{ImVec2(0, 200)};
+
+    ImGui::SetNextWindowPos(game_over_position);
+    ImGui::SetNextWindowSize(game_over_size);
+    ImGui::Begin(" ", nullptr,  flagsDisplayText);
     ImGui::PushFont(m_font_game_over);
 
     ImGui::Text("Fim de Jogo!");
@@ -365,7 +390,7 @@ void OpenGLWindow::paintUI() {
 
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size); 
-    ImGui::Begin(" ", nullptr, flags);
+    ImGui::Begin(" ", nullptr,  flagsDisplayText);
     ImGui::PushFont(m_font_message);
 
     ImGui::Text("%d pontos!\nAcelerando 20%%", pontos);
@@ -561,8 +586,8 @@ void OpenGLWindow::resizeGL(int width, int height) {
   m_viewportWidth = width;
   m_viewportHeight = height;
 
-  m_trackBallModel.resizeViewport(width, height);
-  m_trackBallLight.resizeViewport(width, height);
+  // m_trackBallModel.resizeViewport(width, height);
+  // m_trackBallLight.resizeViewport(width, height);
   
   m_camera.computeProjectionMatrix(width, height);
 }
@@ -588,21 +613,11 @@ void OpenGLWindow::translateModel(float speed){
   m_forward = m_forward * speed * m_logSpeedFactor;
 
   m_modelMatrix = glm::translate(m_modelMatrix, m_forward);
-
-  //glm::vec3 direction = - m_forward * (timer - elapsedTime);
-  // glm::mat4 transform{glm::mat4(1.0f)};
-  // glm::vec3 direction = glm::vec3(m_modelMatrix[3][0], m_modelMatrix[3][1], m_modelMatrix[3][2]);
-
-  // transform = glm::translate(transform, direction);
-  // transform = glm::rotate(transform, 3 * speed, glm::vec3(1,0,0));
-  // transform = glm::translate(transform, -direction);
-
-  // m_modelMatrix = transform * m_modelMatrix;
 }
 
 //Leva o modelo de volta a posicao inicial
 void OpenGLWindow::resetModelPosition(){
-  m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -1));
+  m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -1 * m_logSpeedFactor));
 }
 
 void OpenGLWindow::update() {
@@ -611,7 +626,30 @@ void OpenGLWindow::update() {
 
   elapsedTime += deltaTime;
   
-  if(timer >= elapsedTime){
+  if(isJumping){
+    if(!avisoPulandoDado){
+      printf("esta pulando\n");
+      avisoPulandoDado = true;
+      avisoEncerrouPuloDado = false;
+    }
+    m_camera.jump(m_jumpSpeed * deltaTime * m_jumpSpeedFactor);  
+
+    if(m_camera.m_at.y > 0.49f){
+      m_jumpSpeed -= 3 * deltaTime;
+    }
+    else {
+      if(!avisoEncerrouPuloDado){
+        printf("encerrou o pulo\n");
+        avisoEncerrouPuloDado = true;
+        avisoPulandoDado = false;
+      }
+      isJumping = false;
+      m_jumpSpeed = 0;
+      m_camera.m_at.y = 0.5f;
+    }
+  }
+
+  if(getZPos(m_modelMatrix) < 2.5f){
     translateModel(m_LogSpeed * deltaTime);
   }
   else{
@@ -625,6 +663,8 @@ void OpenGLWindow::update() {
   if(pontos > 0 && pontos % 5 == 0 && !acelerar){
     //incrementa a velocidade em 20% a cada 5 troncos pulados
     m_logSpeedFactor += 0.2f;
+    m_jumpSpeedFactor += 0.2f;
+
     acelerar = true;
   }
 
@@ -639,23 +679,10 @@ void OpenGLWindow::update() {
 
   checkCollisions();
 
-  // Update LookAt camera
+  //Update LookAt camera
   m_camera.dolly(m_dollySpeed * deltaTime);
   m_camera.truck(m_truckSpeed * deltaTime);
   m_camera.pan(m_panSpeed * deltaTime);
-
-  if(isJumping){
-    m_camera.jump(m_jumpSpeed * deltaTime);  
-     
-    if(m_camera.m_at.y > 0.5f){
-      m_jumpSpeed -= 2 * deltaTime;
-    }
-    else {
-      isJumping = false;
-      m_jumpSpeed = 0;
-      m_camera.m_at.y = 0.5f;
-    }
-  }
 
   if(houveColisao){
     restartTimer -= deltaTime;
@@ -682,4 +709,5 @@ void OpenGLWindow::restart(){
   restartTimer = 3.0f;
   elapsedMsgTimer = 0.0f;
   m_logSpeedFactor = 1.0f;
+  m_jumpSpeedFactor = 1.0f;
 }
